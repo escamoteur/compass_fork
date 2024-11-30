@@ -5,39 +5,31 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'api_client.dart';
+
 import '../../utils/result.dart';
 import 'model/login_request/login_request.dart';
 import 'model/login_response/login_response.dart';
 
-class AuthApiClient {
+class AuthApiClient extends ApiClient {
   AuthApiClient({
-    String? host,
-    int? port,
-    HttpClient Function()? clientFactory,
-  })  : _host = host ?? 'localhost',
-        _port = port ?? 8080,
-        _clientFactory = clientFactory ?? (() => HttpClient());
-
-  final String _host;
-  final int _port;
-  final HttpClient Function() _clientFactory;
+    super.host,
+    super.port,
+    super.headerParams,
+    super.clientFactory,
+  });
 
   Future<Result<LoginResponse>> login(LoginRequest loginRequest) async {
-    final client = _clientFactory();
     try {
-      final request = await client.post(_host, _port, '/login');
-      request.write(jsonEncode(loginRequest));
-      final response = await request.close();
+      final response = await post('/login', jsonEncode(loginRequest));
       if (response.statusCode == 200) {
-        final stringData = await response.transform(utf8.decoder).join();
+        final stringData = utf8.decode(response.bodyBytes);
         return Result.ok(LoginResponse.fromJson(jsonDecode(stringData)));
       } else {
         return Result.error(const HttpException("Login error"));
       }
     } on Exception catch (error) {
       return Result.error(error);
-    } finally {
-      client.close();
     }
   }
 }

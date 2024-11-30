@@ -6,21 +6,21 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:go_router/go_router.dart';
+import 'package:http/http.dart';
+import 'package:http/io_client.dart';
 import 'package:mocktail/mocktail.dart';
 
 class MockGoRouter extends Mock implements GoRouter {}
 
-class MockHttpClient extends Mock implements HttpClient {}
+class MockHttpClient extends Mock implements IOClient {}
 
 class MockHttpHeaders extends Mock implements HttpHeaders {}
 
-class MockHttpClientRequest extends Mock implements HttpClientRequest {}
-
-class MockHttpClientResponse extends Mock implements HttpClientResponse {}
+class MockHttpClientResponse extends Mock implements Response {}
 
 extension HttpMethodMocks on MockHttpClient {
   void mockGet(String path, Object object) {
-    when(() => get(any(), any(), path)).thenAnswer((invocation) {
+    when(() => get(path, headers: any())).thenAnswer((invocation) {
       final request = MockHttpClientRequest();
       final response = MockHttpClientResponse();
       when(() => request.close()).thenAnswer((_) => Future.value(response));
