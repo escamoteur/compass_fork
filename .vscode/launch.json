@@ -1,0 +1,38 @@
+{
+	// Use IntelliSense to learn about possible attributes.
+	// Hover to view descriptions of existing attributes.
+	// For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"name": "compass_fork development",
+			"request": "launch",
+			"type": "dart",
+			"args": [
+				"-t",
+				"lib/main_development.dart"
+			]
+		},
+		{
+			"name": "compass_fork staging",
+			"request": "launch",
+			"type": "dart",
+			"args": [
+				"-t",
+				"lib/main_staging.dart"
+			]
+		},
+		{
+			"name": "compass_fork (profile mode)",
+			"request": "launch",
+			"type": "dart",
+			"flutterMode": "profile"
+		},
+		{
+			"name": "compass_fork (release mode)",
+			"request": "launch",
+			"type": "dart",
+			"flutterMode": "release"
+		}
+	]
+}
