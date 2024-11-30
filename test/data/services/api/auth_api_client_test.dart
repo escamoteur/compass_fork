@@ -25,7 +25,7 @@ void main() {
         userId: '123',
       );
       mockHttpClient.mockPost(
-        '/login',
+        Uri(path: '/login'),
         loginResponse,
         200,
       );

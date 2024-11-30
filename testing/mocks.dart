@@ -3,56 +3,49 @@
 // found in the LICENSE file.
 
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:go_router/go_router.dart';
-import 'package:http/http.dart';
-import 'package:http/io_client.dart';
+import 'package:http/http.dart' show Client, Response;
 import 'package:mocktail/mocktail.dart';
 
 class MockGoRouter extends Mock implements GoRouter {}
 
-class MockHttpClient extends Mock implements IOClient {}
-
-class MockHttpHeaders extends Mock implements HttpHeaders {}
+class MockHttpClient extends Mock implements Client {}
 
 class MockHttpClientResponse extends Mock implements Response {}
 
 extension HttpMethodMocks on MockHttpClient {
-  void mockGet(String path, Object object) {
-    when(() => get(path, headers: any())).thenAnswer((invocation) {
-      final request = MockHttpClientRequest();
+  void mockGet(Uri path, Object object) {
+    when(() => get(path, headers: any(named: 'headers')))
+        .thenAnswer((invocation) {
       final response = MockHttpClientResponse();
-      when(() => request.close()).thenAnswer((_) => Future.value(response));
-      when(() => request.headers).thenReturn(MockHttpHeaders());
       when(() => response.statusCode).thenReturn(200);
-      when(() => response.transform(utf8.decoder))
-          .thenAnswer((_) => Stream.value(jsonEncode(object)));
-      return Future.value(request);
+      when(() => response.bodyBytes)
+          .thenReturn(utf8.encode(jsonEncode(object)));
+      return Future.value(response);
     });
   }
 
-  void mockPost(String path, Object object, [int statusCode = 201]) {
-    when(() => post(any(), any(), path)).thenAnswer((invocation) {
-      final request = MockHttpClientRequest();
+  void mockPost(Uri path, Object object, [int statusCode = 201]) {
+    when(() => post(path,
+        body: any(named: 'body'),
+        encoding: any(
+          named: 'encoding',
+        ),
+        headers: any(named: 'headers'))).thenAnswer((invocation) {
       final response = MockHttpClientResponse();
-      when(() => request.close()).thenAnswer((_) => Future.value(response));
-      when(() => request.headers).thenReturn(MockHttpHeaders());
       when(() => response.statusCode).thenReturn(statusCode);
-      when(() => response.transform(utf8.decoder))
-          .thenAnswer((_) => Stream.value(jsonEncode(object)));
-      return Future.value(request);
+      when(() => response.bodyBytes)
+          .thenReturn(utf8.encode(jsonEncode(object)));
+      return Future.value(response);
     });
   }
 
-  void mockDelete(String path) {
-    when(() => delete(any(), any(), path)).thenAnswer((invocation) {
-      final request = MockHttpClientRequest();
+  void mockDelete(Uri path) {
+    when(() => delete(path)).thenAnswer((invocation) {
       final response = MockHttpClientResponse();
-      when(() => request.close()).thenAnswer((_) => Future.value(response));
-      when(() => request.headers).thenReturn(MockHttpHeaders());
       when(() => response.statusCode).thenReturn(204);
-      return Future.value(request);
+      return Future.value(response);
     });
   }
 }

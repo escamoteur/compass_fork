@@ -9,6 +9,7 @@ import 'package:compass_app/_features/activities/_model/activity.dart';
 import 'package:compass_app/_features/search/_model/continent.dart';
 import 'package:compass_app/_features/search/_model/destination.dart';
 import 'package:compass_app/_shared/utils/result.dart';
+import 'package:http/src/response.dart';
 
 import '../../models/activity.dart';
 import '../../models/booking.dart';
@@ -116,5 +117,20 @@ class FakeApiClient implements ApiClient {
   Future<Result<void>> deleteBooking(int id) async {
     bookings.removeWhere((booking) => booking.id == id);
     return Result.ok(null);
+  }
+
+  @override
+  Future<Response> delete(String path) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Response> get(String path) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Response> post(String path, body) {
+    throw UnimplementedError();
   }
 }
