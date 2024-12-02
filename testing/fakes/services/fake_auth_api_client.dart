@@ -16,7 +16,7 @@ import 'package:http/src/response.dart';
 
 class FakeAuthApiClient implements AuthApiClient {
   @override
-  Future<Result<LoginResponse>> login(LoginRequest loginRequest) async {
+  Future<LoginResponse>> login(LoginRequest loginRequest) async {
     if (loginRequest.email == 'EMAIL' && loginRequest.password == 'PASSWORD') {
       return Result.ok(const LoginResponse(token: 'TOKEN', userId: '123'));
     }
@@ -34,7 +34,7 @@ class FakeAuthApiClient implements AuthApiClient {
   }
 
   @override
-  Future<Result<void>> deleteBooking(int id) {
+  Future<void>> deleteBooking(int id) {
     throw UnimplementedError();
   }
 
@@ -44,32 +44,32 @@ class FakeAuthApiClient implements AuthApiClient {
   }
 
   @override
-  Future<Result<List<Activity>>> getActivityByDestination(String ref) {
+  Future<List<Activity>>> getActivityByDestination(String ref) {
     throw UnimplementedError();
   }
 
   @override
-  Future<Result<BookingApiModel>> getBooking(int id) {
+  Future<BookingApiModel>> getBooking(int id) {
     throw UnimplementedError();
   }
 
   @override
-  Future<Result<List<BookingApiModel>>> getBookings() {
+  Future<List<BookingApiModel>>> getBookings() {
     throw UnimplementedError();
   }
 
   @override
-  Future<Result<List<Continent>>> getContinents() {
+  Future<List<Continent>>> getContinents() {
     throw UnimplementedError();
   }
 
   @override
-  Future<Result<List<Destination>>> getDestinations() {
+  Future<List<Destination>>> getDestinations() {
     throw UnimplementedError();
   }
 
   @override
-  Future<Result<UserApiModel>> getUser() {
+  Future<UserApiModel>> getUser() {
     throw UnimplementedError();
   }
 
@@ -79,7 +79,7 @@ class FakeAuthApiClient implements AuthApiClient {
   }
 
   @override
-  Future<Result<BookingApiModel>> postBooking(BookingApiModel booking) {
+  Future<BookingApiModel>> postBooking(BookingApiModel booking) {
     throw UnimplementedError();
   }
 }

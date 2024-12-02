@@ -17,7 +17,7 @@ class ActivityRepositoryLocal implements ActivityRepository {
   final LocalDataService _localDataService;
 
   @override
-  Future<Result<List<Activity>>> getByDestination(String ref) async {
+  Future<List<Activity>>> getByDestination(String ref) async {
     try {
       final activities = (await _localDataService.getActivities())
           .where((activity) => activity.destinationRef == ref)

@@ -58,37 +58,33 @@ class AuthManagerRemote extends AuthManager {
   );
 
   @override
-  late Command<void, void> logoutCommand = Command.createAsyncNoParamNoResult(
-    () async {
-      try {
-        assert(_authToken != null, 'User is not logged in');
-        // Clear stored auth token
-        await di<SharedPreferencesService>().saveToken(null);
+  Future<void> logout() async {
+    try {
+      assert(_authToken != null, 'User is not logged in');
+      // Clear stored auth token
+      await di<SharedPreferencesService>().saveToken(null);
 
-        // Clear token in ApiClient
-        _authToken = null;
-        di.popScope();
-        _log.info('User logged out');
-      } finally {
-        notifyListeners();
-      }
-    },
-  );
+      // Clear token in ApiClient
+      _authToken = null;
+      di.popScope();
+      _log.info('User logged out');
+    } finally {
+      notifyListeners();
+    }
+    super.logout();
+  }
 
-  User? _cachedData;
+  UserProxy? _cachedData;
 
   @override
-  late Command<void, User?> getCurrentUserCommand =
+  late Command<void, UserProxy?> getCurrentUserCommand =
       Command.createAsyncNoParam(() async {
     if (_cachedData != null) {
       return _cachedData;
     }
 
     final result = await di<ApiClient>().getUser();
-    final user = User(
-      name: result.name,
-      picture: result.picture,
-    );
+    final user = UserProxy(result);
     _cachedData = user;
     return user;
   }, initialValue: null);

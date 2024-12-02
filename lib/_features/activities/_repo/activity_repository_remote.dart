@@ -20,7 +20,7 @@ class ActivityRepositoryRemote implements ActivityRepository {
   final Map<String, List<Activity>> _cachedData = {};
 
   @override
-  Future<Result<List<Activity>>> getByDestination(String ref) async {
+  Future<List<Activity>>> getByDestination(String ref) async {
     if (!_cachedData.containsKey(ref)) {
       // No cached data, request activities
       final result = await _apiClient.getActivityByDestination(ref);

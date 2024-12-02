@@ -2,29 +2,29 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:compass_app/_features/booking/_repo/booking_repository.dart';
+import 'package:compass_app/_features/booking/_repo/booking_manager_.dart';
 import 'package:compass_app/_features/booking/_model/booking.dart';
 import 'package:compass_app/_features/booking/_model/booking_summary.dart';
 import 'package:compass_app/_shared/utils/result.dart';
 
-class FakeBookingRepository implements BookingRepository {
+class FakeBookingRepository implements BookingManager {
   List<Booking> bookings = List.empty(growable: true);
   int sequentialId = 0;
 
   @override
-  Future<Result<void>> createBooking(Booking booking) async {
+  Future<void>> createBooking(Booking booking) async {
     final bookingWithId = booking.copyWith(id: sequentialId++);
     bookings.add(bookingWithId);
     return Result.ok(null);
   }
 
   @override
-  Future<Result<Booking>> getBooking(int id) async {
+  Future<Booking>> getBooking(int id) async {
     return Result.ok(bookings[id]);
   }
 
   @override
-  Future<Result<List<BookingSummary>>> getBookingsList() async {
+  Future<List<BookingSummary>>> getBookingsList() async {
     return Result.ok(_createSummaries());
   }
 
@@ -43,7 +43,7 @@ class FakeBookingRepository implements BookingRepository {
   }
 
   @override
-  Future<Result<void>> delete(int id) async {
+  Future<void>> delete(int id) async {
     bookings.removeWhere((booking) => booking.id == id);
     return Result.ok(null);
   }

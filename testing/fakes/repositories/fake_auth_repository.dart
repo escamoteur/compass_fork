@@ -12,7 +12,7 @@ class FakeAuthRepository extends AuthManager {
   Future<bool> get isAuthenticated async => token != null;
 
   @override
-  Future<Result<void>> login({
+  Future<void>> login({
     required String email,
     required String password,
   }) async {
@@ -22,7 +22,7 @@ class FakeAuthRepository extends AuthManager {
   }
 
   @override
-  Future<Result<void>> logout() async {
+  Future<void>> logout() async {
     token = null;
     notifyListeners();
     return Result.ok(null);

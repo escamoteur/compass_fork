@@ -6,11 +6,11 @@ import 'dart:convert';
 
 import 'package:flutter/services.dart';
 
-import '../../../config/assets.dart';
 import '../../../_features/activities/_model/activity.dart';
+import '../../../_features/auth/_model/user.dart';
 import '../../../_features/search/_model/continent.dart';
 import '../../../_features/search/_model/destination.dart';
-import '../../../_features/auth/_model/user.dart';
+import '../../../config/assets.dart';
 
 class LocalDataService {
   List<Continent> getContinents() {
@@ -61,8 +61,8 @@ class LocalDataService {
     return (jsonDecode(localData) as List).cast<Map<String, dynamic>>();
   }
 
-  User getUser() {
-    return const User(
+  UserProxy getUser() {
+    return const UserProxy(
       name: 'Sofie',
       // For demo purposes we use a local asset
       picture: 'assets/user.jpg',

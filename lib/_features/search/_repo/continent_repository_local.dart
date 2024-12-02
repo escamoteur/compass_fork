@@ -16,7 +16,7 @@ class ContinentRepositoryLocal implements ContinentRepository {
   final LocalDataService _localDataService;
 
   @override
-  Future<Result<List<Continent>>> getContinents() async {
+  Future<List<Continent>>> getContinents() async {
     return Future.value(Result.ok(_localDataService.getContinents()));
   }
 }

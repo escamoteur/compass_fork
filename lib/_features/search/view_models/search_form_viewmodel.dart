@@ -87,7 +87,7 @@ class SearchFormViewModel extends ChangeNotifier {
   /// Store ViewModel data into [ItineraryConfigRepository] before navigating.
   late final Command0 updateItineraryConfig;
 
-  Future<Result<void>> _load() async {
+  Future<void>> _load() async {
     final result = await _loadContinents();
     if (result is Error) {
       return result;
@@ -95,7 +95,7 @@ class SearchFormViewModel extends ChangeNotifier {
     return await _loadItineraryConfig();
   }
 
-  Future<Result<void>> _loadContinents() async {
+  Future<void>> _loadContinents() async {
     final result = await _continentRepository.getContinents();
     switch (result) {
       case Ok():
@@ -112,7 +112,7 @@ class SearchFormViewModel extends ChangeNotifier {
     return result;
   }
 
-  Future<Result<void>> _loadItineraryConfig() async {
+  Future<void>> _loadItineraryConfig() async {
     final result = await _itineraryConfigRepository.getItineraryConfig();
     switch (result) {
       case Ok<ItineraryConfig>():
@@ -141,7 +141,7 @@ class SearchFormViewModel extends ChangeNotifier {
     return result;
   }
 
-  Future<Result<void>> _updateItineraryConfig() async {
+  Future<void>> _updateItineraryConfig() async {
     assert(valid, "called when valid was false");
     final result = await _itineraryConfigRepository.setItineraryConfig(
       ItineraryConfig(

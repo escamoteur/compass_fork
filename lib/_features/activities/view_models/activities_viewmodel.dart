@@ -43,7 +43,7 @@ class ActivitiesViewModel extends ChangeNotifier {
   /// Save list [selectedActivities] into itinerary configuration.
   late final Command0 saveActivities;
 
-  Future<Result<void>> _loadActivities() async {
+  Future<void>> _loadActivities() async {
     final result = await _itineraryConfigRepository.getItineraryConfig();
     if (result is Error) {
       _log.warning(
@@ -118,7 +118,7 @@ class ActivitiesViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<Result<void>> _saveActivities() async {
+  Future<void>> _saveActivities() async {
     final resultConfig = await _itineraryConfigRepository.getItineraryConfig();
     if (resultConfig is Error) {
       _log.warning(

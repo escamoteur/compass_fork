@@ -3,10 +3,9 @@
 // found in the LICENSE file.
 
 import '../_model/activity.dart';
-import '../../../_shared/utils/result.dart';
 
 /// Data source for activities.
 abstract class ActivityRepository {
   /// Get activities by [Destination] ref.
-  Future<Result<List<Activity>>> getByDestination(String ref);
+  Future<List<Activity>> getByDestination(String ref);
 }

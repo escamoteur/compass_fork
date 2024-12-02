@@ -17,7 +17,7 @@ class FakeActivityRepository implements ActivityRepository {
   };
 
   @override
-  Future<Result<List<Activity>>> getByDestination(String ref) {
+  Future<List<Activity>>> getByDestination(String ref) {
     return SynchronousFuture(Result.ok(activities[ref]!));
   }
 }

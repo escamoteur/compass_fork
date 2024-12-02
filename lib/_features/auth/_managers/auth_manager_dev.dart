@@ -5,7 +5,6 @@
 import 'package:flutter_command/flutter_command.dart';
 
 import '../../../_shared/services/local/local_data_service.dart';
-import '../../../_shared/utils/result.dart';
 import '../_model/user.dart';
 import 'auth_manager_.dart';
 
@@ -30,18 +29,8 @@ class AuthManagerDev extends AuthManager {
   late Command<({String email, String password}), void> loginCommand =
       Command.createAsyncNoResult((credentials) async {});
 
-  /// Logout is always successful in dev scenarios
   @override
-  late Command<void, void> logoutCommand =
-      Command.createAsyncNoParamNoResult(() async {});
-
-  @override
-  Future<Result<User>> getUser() async {
-    return Result.ok(_localDataService.getUser());
-  }
-
-  @override
-  late Command<void, User?> getCurrentUserCommand =
+  late Command<void, UserProxy?> getCurrentUserCommand =
       Command.createAsyncNoParam(() async {
     return _localDataService.getUser();
   }, initialValue: null);

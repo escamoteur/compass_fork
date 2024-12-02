@@ -19,7 +19,8 @@ abstract class AuthManager extends ChangeNotifier {
   Command<({String email, String password}), void> get loginCommand;
 
   late final Command<void, void> logoutCommand =
-      Command.createAsyncNoParamNoResult(() => logout());
+      Command.createAsyncNoParamNoResult(() => logout(),
+          errorFilter: ErrorHandlerLocalAndGlobal());
 
   @mustCallSuper
   Future<void> logout() async {
@@ -28,5 +29,5 @@ abstract class AuthManager extends ChangeNotifier {
   }
 
   /// Get current user
-  Command<void, User?> get getCurrentUserCommand;
+  Command<void, UserProxy?> get getCurrentUserCommand;
 }

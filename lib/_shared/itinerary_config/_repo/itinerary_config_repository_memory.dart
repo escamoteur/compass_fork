@@ -14,11 +14,13 @@ class ItineraryConfigRepositoryMemory implements ItineraryConfigRepository {
 
   @override
   Future<ItineraryConfig> getItineraryConfig() async {
+        // TODO
+        _log.warning('ItineraryConfig error: ${itineraryConfig.error}');
     return _itineraryConfig ?? const ItineraryConfig();
   }
 
   @override
-  Future<Result<bool>> setItineraryConfig(
+  Future<bool>> setItineraryConfig(
     ItineraryConfig itineraryConfig,
   ) async {
     _itineraryConfig = itineraryConfig;

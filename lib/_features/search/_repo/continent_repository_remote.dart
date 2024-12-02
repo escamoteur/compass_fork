@@ -20,7 +20,7 @@ class ContinentRepositoryRemote implements ContinentRepository {
   List<Continent>? _cachedData;
 
   @override
-  Future<Result<List<Continent>>> getContinents() async {
+  Future<List<Continent>>> getContinents() async {
     if (_cachedData == null) {
       // No cached data, request continents
       final result = await _apiClient.getContinents();

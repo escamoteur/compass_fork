@@ -4,44 +4,72 @@
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:watch_it/watch_it.dart';
 
-import '../../activities/_model/activity.dart';
-import '../../../_shared/utils/image_error_listener.dart';
+import '../../../_shared/ui/localization/applocalization.dart';
 import '../../../_shared/ui/themes/dimens.dart';
-import '../view_models/booking_viewmodel.dart';
+import '../../../_shared/ui/ui/error_indicator.dart';
+import '../../../_shared/utils/image_error_listener.dart';
+import '../../../routing/routes.dart';
+import '../../activities/_model/activity.dart';
+import '../_repo/booking_manager_.dart';
 import 'booking_header.dart';
 
-class BookingBody extends StatelessWidget {
-  const BookingBody({
-    super.key,
-    required this.viewModel,
-  });
-
-  final BookingViewModel viewModel;
+class BookingBody extends WatchingWidget {
+  const BookingBody({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return ListenableBuilder(
-      listenable: viewModel,
-      builder: (context, _) {
-        final booking = viewModel.booking;
-        if (booking == null) return const SizedBox();
-        return CustomScrollView(
-          slivers: [
-            SliverToBoxAdapter(child: BookingHeader(booking: booking)),
-            SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (context, index) {
-                  final activity = booking.activity[index];
-                  return _Activity(activity: activity);
-                },
-                childCount: booking.activity.length,
-              ),
-            ),
-            const SliverToBoxAdapter(child: SizedBox(height: 200)),
-          ],
-        );
-      },
+    final isBusy =
+        watchValue((BookingManager bookingManager) => bookingManager.isBusy);
+    final creationError = watchValue((BookingManager bookingManager) =>
+        bookingManager.createBookingCommand.errors);
+    final loadError = watchValue((BookingManager bookingManager) =>
+        bookingManager.loadBookingCommand.errors);
+    if (isBusy) {
+      const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+    final booking =
+        watchValue((BookingManager bookingManager) => bookingManager.booking);
+
+    // If fails to create booking, tap to try again
+    if (creationError != null) {
+      return Center(
+        child: ErrorIndicator(
+          title: AppLocalization.of(context).errorWhileLoadingBooking,
+          label: AppLocalization.of(context).tryAgain,
+          onPressed: di<BookingManager>().createBookingCommand.execute,
+        ),
+      );
+    }
+    // If existing booking fails to load, tap to go /home
+    if (loadError != null) {
+      return Center(
+        child: ErrorIndicator(
+          title: AppLocalization.of(context).errorWhileLoadingBooking,
+          label: AppLocalization.of(context).close,
+          onPressed: () => context.go(Routes.home),
+        ),
+      );
+    }
+    if (booking == null) return const SizedBox();
+    return CustomScrollView(
+      slivers: [
+        SliverToBoxAdapter(child: BookingHeader(booking: booking)),
+        SliverList(
+          delegate: SliverChildBuilderDelegate(
+            (context, index) {
+              final activity = booking.activity[index];
+              return _Activity(activity: activity);
+            },
+            childCount: booking.activity.length,
+          ),
+        ),
+        const SliverToBoxAdapter(child: SizedBox(height: 200)),
+      ],
     );
   }
 }

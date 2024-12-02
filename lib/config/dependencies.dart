@@ -14,9 +14,9 @@ import '../_features/auth/_managers/auth_manager_remote.dart';
 import '../_features/auth/_managers/user_repository.dart';
 import '../_features/auth/_managers/user_repository_local.dart';
 import '../_features/auth/_managers/user_repository_remote.dart';
-import '../_features/booking/_repo/booking_repository.dart';
-import '../_features/booking/_repo/booking_repository_local.dart';
-import '../_features/booking/_repo/booking_repository_remote.dart';
+import '../_features/booking/_repo/booking_manager_.dart';
+import '../_features/booking/_repo/booking_manager_local.dart';
+import '../_features/booking/_repo/booking_manager_remote.dart';
 import '../_features/booking/_repo/destination_repository.dart';
 import '../_features/booking/_repo/destination_repository_local.dart';
 import '../_features/booking/_repo/destination_repository_remote.dart';
@@ -89,7 +89,7 @@ List<SingleChildWidget> get providersRemote {
     Provider(
       create: (context) => BookingRepositoryRemote(
         apiClient: context.read(),
-      ) as BookingRepository,
+      ) as BookingManager,
     ),
     Provider(
       create: (context) => UserRepositoryRemote(
@@ -129,7 +129,7 @@ List<SingleChildWidget> get providersLocal {
     Provider(
       create: (context) => BookingRepositoryLocal(
         localDataService: context.read(),
-      ) as BookingRepository,
+      ) as BookingManager,
     ),
     Provider.value(
       value: ItineraryConfigRepositoryMemory() as ItineraryConfigRepository,

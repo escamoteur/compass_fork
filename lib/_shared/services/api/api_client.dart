@@ -80,7 +80,7 @@ class ApiClient {
     return request;
   }
 
-  Future<Result<List<Continent>>> getContinents() async {
+  Future<List<Continent>>> getContinents() async {
     try {
       final response = await get('/continent');
       if (response.statusCode == 200) {
@@ -96,7 +96,7 @@ class ApiClient {
     }
   }
 
-  Future<Result<List<Destination>>> getDestinations() async {
+  Future<List<Destination>> getDestinations() async {
     try {
       final response = await get('/destination');
       if (response.statusCode == 200) {
@@ -112,7 +112,7 @@ class ApiClient {
     }
   }
 
-  Future<Result<List<Activity>>> getActivityByDestination(String ref) async {
+  Future<List<Activity>>> getActivityByDestination(String ref) async {
     try {
       final response = await get('/destination/$ref/activity');
       if (response.statusCode == 200) {
@@ -129,7 +129,7 @@ class ApiClient {
     }
   }
 
-  Future<Result<List<BookingApiModel>>> getBookings() async {
+  Future<List<BookingApiModel>>> getBookings() async {
     try {
       final response = await get('/booking');
       if (response.statusCode == 200) {
@@ -146,7 +146,7 @@ class ApiClient {
     }
   }
 
-  Future<Result<BookingApiModel>> getBooking(int id) async {
+  Future<BookingApiModel>> getBooking(int id) async {
     try {
       final response = await get('/booking/$id');
       if (response.statusCode == 200) {
@@ -161,7 +161,7 @@ class ApiClient {
     }
   }
 
-  Future<Result<BookingApiModel>> postBooking(BookingApiModel booking) async {
+  Future<BookingApiModel>> postBooking(BookingApiModel booking) async {
     try {
       final response = await post('/booking', jsonEncode(booking));
       if (response.statusCode == 201) {
@@ -187,7 +187,7 @@ class ApiClient {
     }
   }
 
-  Future<Result<void>> deleteBooking(int id) async {
+  Future<void>> deleteBooking(int id) async {
     try {
       final response = await delete('/booking/$id');
       // Response 204 "No Content", delete was successful

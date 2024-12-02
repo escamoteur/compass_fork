@@ -47,7 +47,7 @@ class ResultsViewModel extends ChangeNotifier {
   /// Store ViewModel data into [ItineraryConfigRepository] before navigating.
   late final Command1<void, String> updateItineraryConfig;
 
-  Future<Result<void>> _search() async {
+  Future<void>> _search() async {
     // Load current itinerary config
     final resultConfig = await _itineraryConfigRepository.getItineraryConfig();
     if (resultConfig is Error) {
@@ -82,7 +82,7 @@ class ResultsViewModel extends ChangeNotifier {
     return result;
   }
 
-  Future<Result<void>> _updateItineraryConfig(String destinationRef) async {
+  Future<void>> _updateItineraryConfig(String destinationRef) async {
     assert(destinationRef.isNotEmpty, "destinationRef should not be empty");
 
     final resultConfig = await _itineraryConfigRepository.getItineraryConfig();

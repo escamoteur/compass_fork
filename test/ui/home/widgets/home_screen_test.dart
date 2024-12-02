@@ -125,7 +125,7 @@ void main() {
 
 class _BadFakeBookingRepository extends FakeBookingRepository {
   @override
-  Future<Result<void>> delete(int id) async {
+  Future<void>> delete(int id) async {
     return Result.error(Exception('Failed to delete booking'));
   }
 }

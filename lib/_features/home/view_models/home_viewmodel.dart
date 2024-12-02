@@ -7,16 +7,14 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 
-import '../../booking/_repo/booking_repository.dart';
-import '../../auth/_managers/user_repository.dart';
-import '../../booking/_model/booking_summary.dart';
-import '../../auth/_model/user.dart';
-import '../../../_shared/utils/command.dart';
 import '../../../_shared/utils/result.dart';
+import '../../auth/_model/user.dart';
+import '../../booking/_model/booking_summary.dart';
+import '../../booking/_repo/booking_manager_.dart';
 
 class HomeViewModel extends ChangeNotifier {
   HomeViewModel({
-    required BookingRepository bookingRepository,
+    required BookingManager bookingRepository,
     required UserRepository userRepository,
   })  : _bookingRepository = bookingRepository,
         _userRepository = userRepository {
@@ -24,18 +22,18 @@ class HomeViewModel extends ChangeNotifier {
     deleteBooking = Command1(_deleteBooking);
   }
 
-  final BookingRepository _bookingRepository;
+  final BookingManager _bookingRepository;
   final UserRepository _userRepository;
   final _log = Logger('HomeViewModel');
   List<BookingSummary> _bookings = [];
-  User? _user;
+  UserProxy? _user;
 
   late Command0 load;
   late Command1<void, int> deleteBooking;
 
   List<BookingSummary> get bookings => _bookings;
 
-  User? get user => _user;
+  UserProxy? get user => _user;
 
   Future<Result> _load() async {
     try {
@@ -51,10 +49,10 @@ class HomeViewModel extends ChangeNotifier {
 
       final userResult = await _userRepository.getUser();
       switch (userResult) {
-        case Ok<User>():
+        case Ok<UserProxy>():
           _user = userResult.value;
           _log.fine('Loaded user');
-        case Error<User>():
+        case Error<UserProxy>():
           _log.warning('Failed to load user', userResult.error);
       }
 
@@ -64,7 +62,7 @@ class HomeViewModel extends ChangeNotifier {
     }
   }
 
-  Future<Result<void>> _deleteBooking(int id) async {
+  Future<void>> _deleteBooking(int id) async {
     try {
       final resultDelete = await _bookingRepository.delete(id);
       switch (resultDelete) {

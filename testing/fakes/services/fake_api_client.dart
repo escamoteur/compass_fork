@@ -20,7 +20,7 @@ class FakeApiClient implements ApiClient {
   int requestCount = 0;
 
   @override
-  Future<Result<List<Continent>>> getContinents() async {
+  Future<List<Continent>>> getContinents() async {
     requestCount++;
     return Result.ok([
       const Continent(name: 'CONTINENT', imageUrl: 'URL'),
@@ -30,7 +30,7 @@ class FakeApiClient implements ApiClient {
   }
 
   @override
-  Future<Result<List<Destination>>> getDestinations() async {
+  Future<List<Destination>>> getDestinations() async {
     requestCount++;
     return Result.ok(
       [
@@ -57,7 +57,7 @@ class FakeApiClient implements ApiClient {
   }
 
   @override
-  Future<Result<List<Activity>>> getActivityByDestination(String ref) async {
+  Future<List<Activity>>> getActivityByDestination(String ref) async {
     requestCount++;
 
     if (ref == 'alaska') {
@@ -90,31 +90,31 @@ class FakeApiClient implements ApiClient {
   AuthHeaderProvider? authHeaderProvider;
 
   @override
-  Future<Result<BookingApiModel>> getBooking(int id) async {
+  Future<BookingApiModel>> getBooking(int id) async {
     return Result.ok(kBookingApiModel);
   }
 
   @override
-  Future<Result<List<BookingApiModel>>> getBookings() async {
+  Future<List<BookingApiModel>>> getBookings() async {
     return Result.ok([kBookingApiModel]);
   }
 
   List<BookingApiModel> bookings = [];
 
   @override
-  Future<Result<BookingApiModel>> postBooking(BookingApiModel booking) async {
+  Future<BookingApiModel>> postBooking(BookingApiModel booking) async {
     final bookingWithId = booking.copyWith(id: bookings.length);
     bookings.add(bookingWithId);
     return Result.ok(bookingWithId);
   }
 
   @override
-  Future<Result<UserApiModel>> getUser() async {
+  Future<UserApiModel>> getUser() async {
     return Result.ok(userApiModel);
   }
 
   @override
-  Future<Result<void>> deleteBooking(int id) async {
+  Future<void>> deleteBooking(int id) async {
     bookings.removeWhere((booking) => booking.id == id);
     return Result.ok(null);
   }

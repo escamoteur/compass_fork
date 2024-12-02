@@ -4,19 +4,18 @@
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:watch_it/watch_it.dart';
 
-import '../../../../routing/routes.dart';
 import '../../../../_shared/ui/localization/applocalization.dart';
 import '../../../../_shared/ui/themes/dimens.dart';
+import '../../../../routing/routes.dart';
+import '../../_managers/auth_manager_.dart';
 import 'tilted_cards.dart';
 
-class LoginScreen extends StatefulWidget {
+class LoginScreen extends WatchingStatefulWidget {
   const LoginScreen({
     super.key,
-    required this.viewModel,
   });
-
-  final LoginViewModel viewModel;
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -31,24 +30,23 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
     super.initState();
-    widget.viewModel.login.addListener(_onResult);
-  }
-
-  @override
-  void didUpdateWidget(covariant LoginScreen oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    oldWidget.viewModel.login.removeListener(_onResult);
-    widget.viewModel.login.addListener(_onResult);
   }
 
   @override
   void dispose() {
-    widget.viewModel.login.removeListener(_onResult);
+    _email.dispose();
+    _password.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    registerHandler(
+        select: (AuthManager authManager) => authManager.loginCommand.results,
+        handler: (context, result, _) {
+          if (result.hasData) _onResult(true);
+          if (result.hasError) _onResult(false);
+        });
     return Scaffold(
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -69,17 +67,12 @@ class _LoginScreenState extends State<LoginScreen> {
                   obscureText: true,
                 ),
                 const SizedBox(height: Dimens.paddingVertical),
-                ListenableBuilder(
-                  listenable: widget.viewModel.login,
-                  builder: (context, _) {
-                    return FilledButton(
-                      onPressed: () {
-                        widget.viewModel.login
-                            .execute((_email.value.text, _password.value.text));
-                      },
-                      child: Text(AppLocalization.of(context).login),
-                    );
-                  },
+                FilledButton(
+                  onPressed: () => di<AuthManager>().loginCommand((
+                    email: _email.value.text,
+                    password: _password.value.text
+                  )),
+                  child: Text(AppLocalization.of(context).login),
                 ),
               ],
             ),
@@ -89,21 +82,17 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  void _onResult() {
-    if (widget.viewModel.login.completed) {
-      widget.viewModel.login.clearResult();
+  void _onResult(bool success) {
+    if (success) {
       context.go(Routes.home);
-    }
-
-    if (widget.viewModel.login.error) {
-      widget.viewModel.login.clearResult();
+    } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(AppLocalization.of(context).errorWhileLogin),
           action: SnackBarAction(
             label: AppLocalization.of(context).tryAgain,
-            onPressed: () => widget.viewModel.login
-                .execute((_email.value.text, _password.value.text)),
+            onPressed: () => di<AuthManager>().loginCommand(
+                (email: _email.value.text, password: _password.value.text)),
           ),
         ),
       );

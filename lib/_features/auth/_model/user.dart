@@ -2,20 +2,28 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:flutter/foundation.dart';
 
-part 'user.freezed.dart';
-part 'user.g.dart';
+import '../../../_shared/services/api/model/user/user_api_model.dart';
 
-@freezed
-abstract class User with _$User {
-  const factory User({
-    /// The user's name.
-    required String name,
+class UserProxy extends ChangeNotifier {
+  UserProxy(
+    UserApiModel target,
+  ) : _target = target;
 
-    /// The user's picture URL.
-    required String picture,
-  }) = _User;
+  UserApiModel _target;
 
-  factory User.fromJson(Map<String, Object?> json) => _$UserFromJson(json);
+  UserApiModel get target => _target;
+
+  /// if we ever want to update the user from the backend
+  set target(UserApiModel target) {
+    _target = target;
+    notifyListeners();
+  }
+
+  /// The user's name.
+  String get name => target.name;
+
+  /// The user's picture URL.
+  String get picture => target.picture;
 }

@@ -15,7 +15,7 @@
 ///   }
 /// }
 /// ```
-sealed class Result<T> {
+sealed class T> {
   const Result();
 
   /// Creates an instance of Result containing a value
@@ -32,23 +32,23 @@ sealed class Result<T> {
 }
 
 /// Subclass of Result for values
-final class Ok<T> extends Result<T> {
+final class Ok<T> extends T> {
   const Ok(this.value);
 
   /// Returned value in result
   final T value;
 
   @override
-  String toString() => 'Result<$T>.ok($value)';
+  String toString() => '$T>.ok($value)';
 }
 
 /// Subclass of Result for errors
-final class Error<T> extends Result<T> {
+final class Error<T> extends T> {
   const Error(this.error);
 
   /// Returned error in result
   final Exception error;
 
   @override
-  String toString() => 'Result<$T>.error($error)';
+  String toString() => '$T>.error($error)';
 }

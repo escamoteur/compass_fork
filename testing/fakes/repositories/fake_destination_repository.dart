@@ -11,7 +11,7 @@ import '../../models/destination.dart';
 
 class FakeDestinationRepository implements DestinationRepository {
   @override
-  Future<Result<List<Destination>>> getDestinations() {
+  Future<List<Destination>>> getDestinations() {
     return SynchronousFuture(Result.ok([kDestination1, kDestination2]));
   }
 }

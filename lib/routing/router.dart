@@ -9,7 +9,6 @@ import 'package:provider/provider.dart';
 import '../_features/activities/view_models/activities_viewmodel.dart';
 import '../_features/activities/widgets/activities_screen.dart';
 import '../_features/auth/_managers/auth_manager_.dart';
-import '../_features/auth/login/view_models/login_viewmodel.dart';
 import '../_features/auth/login/widgets/login_screen.dart';
 import '../_features/booking/view_models/booking_viewmodel.dart';
 import '../_features/booking/widgets/booking_screen.dart';
