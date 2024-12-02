@@ -5,24 +5,21 @@
 import 'package:logging/logging.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../utils/result.dart';
-
 class SharedPreferencesService {
   static const _tokenKey = 'TOKEN';
   final _log = Logger('SharedPreferencesService');
 
-  Future<Result<String?>> fetchToken() async {
+  Future<String?> fetchToken() async {
     try {
       final sharedPreferences = await SharedPreferences.getInstance();
       _log.finer('Got token from SharedPreferences');
-      return Result.ok(sharedPreferences.getString(_tokenKey));
-    } on Exception catch (e) {
-      _log.warning('Failed to get token', e);
-      return Result.error(e);
+      return sharedPreferences.getString(_tokenKey);
+    } on Exception {
+      throw Exception('Failed to get auth token');
     }
   }
 
-  Future<Result<void>> saveToken(String? token) async {
+  Future<void> saveToken(String? token) async {
     try {
       final sharedPreferences = await SharedPreferences.getInstance();
       if (token == null) {
@@ -32,10 +29,8 @@ class SharedPreferencesService {
         _log.finer('Replaced token');
         await sharedPreferences.setString(_tokenKey, token);
       }
-      return Result.ok(null);
-    } on Exception catch (e) {
-      _log.warning('Failed to set token', e);
-      return Result.error(e);
+    } on Exception {
+      throw Exception('Failed to set auth token');
     }
   }
 }

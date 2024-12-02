@@ -2,12 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:compass_app/_features/auth/_repo/auth_repository.dart';
-import 'package:compass_app/_shared/itinerary_config/_repo/itinerary_config_repository.dart';
+import 'package:compass_app/_features/auth/_managers/auth_manager_.dart';
 import 'package:compass_app/_features/search/view_models/search_form_viewmodel.dart';
 import 'package:compass_app/_features/search/widgets/search_form_guests.dart';
 import 'package:compass_app/_features/search/widgets/search_form_screen.dart';
 import 'package:compass_app/_features/search/widgets/search_form_submit.dart';
+import 'package:compass_app/_shared/itinerary_config/_repo/itinerary_config_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -36,7 +36,7 @@ void main() {
       await testApp(
         tester,
         ChangeNotifierProvider.value(
-          value: FakeAuthRepository() as AuthRepository,
+          value: FakeAuthRepository() as AuthManager,
           child: Provider.value(
             value: FakeItineraryConfigRepository() as ItineraryConfigRepository,
             child: SearchFormScreen(viewModel: viewModel),

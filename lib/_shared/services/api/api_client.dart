@@ -13,10 +13,22 @@ import '../../../_features/search/_model/continent.dart';
 import '../../../_features/search/_model/destination.dart';
 import '../../utils/result.dart';
 import 'model/booking/booking_api_model.dart';
+import 'model/login_request/login_request.dart';
+import 'model/login_response/login_response.dart';
 import 'model/user/user_api_model.dart';
 
 /// Adds the `Authentication` header to a header configuration.
 typedef AuthHeaderProvider = String? Function();
+
+class ApiException implements Exception {
+  ApiException(this.message, this.statusCode);
+
+  final String message;
+  final int statusCode;
+
+  @override
+  String toString() => 'ApiException: $message, statusCode: $statusCode';
+}
 
 class ApiClient {
   ApiClient({
@@ -24,6 +36,7 @@ class ApiClient {
     int? port,
     Map<String, String>? headerParams,
     Client Function()? clientFactory,
+    this.authToken,
   })  : _host = host ?? 'localhost',
         _port = port ?? 8080,
         _headerParams = headerParams ?? {} {
@@ -33,20 +46,15 @@ class ApiClient {
   final String _host;
   final int _port;
   final Map<String, String> _headerParams;
+  final String? authToken;
 
   /// An app should use a single client for all requests.
   static Client? _client;
 
-  AuthHeaderProvider? _authHeaderProvider;
-
-  set authHeaderProvider(AuthHeaderProvider authHeaderProvider) {
-    _authHeaderProvider = authHeaderProvider;
-  }
-
   Future<void> _applyAuth() async {
-    final header = _authHeaderProvider?.call();
-    if (header != null) {
-      _headerParams.addAll({HttpHeaders.authorizationHeader: header});
+    if (authToken != null) {
+      _headerParams
+          .addAll({HttpHeaders.authorizationHeader: 'Bearer $authToken'});
     }
   }
 
@@ -168,18 +176,14 @@ class ApiClient {
     }
   }
 
-  Future<Result<UserApiModel>> getUser() async {
-    try {
-      final response = await get('/user');
-      if (response.statusCode == 200) {
-        final stringData = utf8.decode(response.bodyBytes);
-        final user = UserApiModel.fromJson(jsonDecode(stringData));
-        return Result.ok(user);
-      } else {
-        return Result.error(const HttpException("Invalid response"));
-      }
-    } on Exception catch (error) {
-      return Result.error(error);
+  Future<UserApiModel> getUser() async {
+    final response = await get('/user');
+    if (response.statusCode == 200) {
+      final stringData = utf8.decode(response.bodyBytes);
+      final user = UserApiModel.fromJson(jsonDecode(stringData));
+      return user;
+    } else {
+      throw ApiException("Failed to load User", response.statusCode);
     }
   }
 
@@ -194,6 +198,17 @@ class ApiClient {
       }
     } on Exception catch (error) {
       return Result.error(error);
+    }
+  }
+
+  Future<LoginResponse> login(LoginRequest loginRequest) async {
+    assert(authToken == null, 'Already logged in');
+    final response = await post('/login', jsonEncode(loginRequest));
+    if (response.statusCode == 200) {
+      final stringData = utf8.decode(response.bodyBytes);
+      return LoginResponse.fromJson(jsonDecode(stringData));
+    } else {
+      throw ApiException('Failed to login', response.statusCode);
     }
   }
 }

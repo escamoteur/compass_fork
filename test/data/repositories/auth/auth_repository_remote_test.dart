@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:compass_app/_features/auth/_repo/auth_repository_remote.dart';
+import 'package:compass_app/_features/auth/_managers/auth_manager_remote.dart';
 import 'package:compass_app/_shared/utils/result.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -15,13 +15,13 @@ void main() {
     late FakeApiClient apiClient;
     late FakeAuthApiClient authApiClient;
     late FakeSharedPreferencesService sharedPreferencesService;
-    late AuthRepositoryRemote repository;
+    late AuthManagerRemote repository;
 
     setUp(() {
       apiClient = FakeApiClient();
       authApiClient = FakeAuthApiClient();
       sharedPreferencesService = FakeSharedPreferencesService();
-      repository = AuthRepositoryRemote(
+      repository = AuthManagerRemote(
         apiClient: apiClient,
         authApiClient: authApiClient,
         sharedPreferencesService: sharedPreferencesService,
@@ -33,7 +33,7 @@ void main() {
       sharedPreferencesService.token = 'TOKEN';
 
       // Create an AuthRepository, should perform initial fetch
-      final repository = AuthRepositoryRemote(
+      final repository = AuthManagerRemote(
         apiClient: apiClient,
         authApiClient: authApiClient,
         sharedPreferencesService: sharedPreferencesService,
@@ -53,7 +53,7 @@ void main() {
       sharedPreferencesService.token = null;
 
       // Create an AuthRepository, should perform initial fetch
-      final repository = AuthRepositoryRemote(
+      final repository = AuthManagerRemote(
         apiClient: apiClient,
         authApiClient: authApiClient,
         sharedPreferencesService: sharedPreferencesService,

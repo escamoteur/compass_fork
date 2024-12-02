@@ -2,35 +2,35 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:provider/single_child_widget.dart';
 import 'package:provider/provider.dart';
+import 'package:provider/single_child_widget.dart';
 
-import '../_features/auth/_repo/auth_repository.dart';
-import '../_features/auth/_repo/auth_repository_dev.dart';
-import '../_features/auth/_repo/auth_repository_remote.dart';
-import '../_features/booking/_repo/booking_repository.dart';
-import '../_features/booking/_repo/booking_repository_local.dart';
-import '../_features/booking/_repo/booking_repository_remote.dart';
-import '../_features/auth/_repo/user_repository.dart';
-import '../_features/auth/_repo/user_repository_local.dart';
-import '../_features/auth/_repo/user_repository_remote.dart';
-import '../_shared/services/api/auth_api_client.dart';
-import '../_shared/services/local/local_data_service.dart';
-import '../_shared/services/shared_preferences_service.dart';
 import '../_features/activities/_repo/activity_repository.dart';
 import '../_features/activities/_repo/activity_repository_local.dart';
 import '../_features/activities/_repo/activity_repository_remote.dart';
-import '../_features/search/_repo/continent_repository.dart';
-import '../_features/search/_repo/continent_repository_local.dart';
-import '../_features/search/_repo/continent_repository_remote.dart';
+import '../_features/auth/_managers/auth_manager_.dart';
+import '../_features/auth/_managers/auth_manager_dev.dart';
+import '../_features/auth/_managers/auth_manager_remote.dart';
+import '../_features/auth/_managers/user_repository.dart';
+import '../_features/auth/_managers/user_repository_local.dart';
+import '../_features/auth/_managers/user_repository_remote.dart';
+import '../_features/booking/_repo/booking_repository.dart';
+import '../_features/booking/_repo/booking_repository_local.dart';
+import '../_features/booking/_repo/booking_repository_remote.dart';
 import '../_features/booking/_repo/destination_repository.dart';
 import '../_features/booking/_repo/destination_repository_local.dart';
 import '../_features/booking/_repo/destination_repository_remote.dart';
+import '../_features/booking/booking_create_use_case.dart';
+import '../_features/booking/booking_share_use_case.dart';
+import '../_features/search/_repo/continent_repository.dart';
+import '../_features/search/_repo/continent_repository_local.dart';
+import '../_features/search/_repo/continent_repository_remote.dart';
 import '../_shared/itinerary_config/_repo/itinerary_config_repository.dart';
 import '../_shared/itinerary_config/_repo/itinerary_config_repository_memory.dart';
 import '../_shared/services/api/api_client.dart';
-import '../_features/booking/booking_create_use_case.dart';
-import '../_features/booking/booking_share_use_case.dart';
+import '../_shared/services/api/auth_api_client.dart';
+import '../_shared/services/local/local_data_service.dart';
+import '../_shared/services/shared_preferences_service.dart';
 
 /// Shared providers for all configurations.
 List<SingleChildWidget> _sharedProviders = [
@@ -62,11 +62,11 @@ List<SingleChildWidget> get providersRemote {
       create: (context) => SharedPreferencesService(),
     ),
     ChangeNotifierProvider(
-      create: (context) => AuthRepositoryRemote(
+      create: (context) => AuthManagerRemote(
         authApiClient: context.read(),
         apiClient: context.read(),
         sharedPreferencesService: context.read(),
-      ) as AuthRepository,
+      ) as AuthManager,
     ),
     Provider(
       create: (context) => DestinationRepositoryRemote(
@@ -106,7 +106,7 @@ List<SingleChildWidget> get providersRemote {
 List<SingleChildWidget> get providersLocal {
   return [
     ChangeNotifierProvider.value(
-      value: AuthRepositoryDev() as AuthRepository,
+      value: AuthManagerDev() as AuthManager,
     ),
     Provider.value(
       value: LocalDataService(),

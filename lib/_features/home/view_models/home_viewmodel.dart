@@ -8,7 +8,7 @@ import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 
 import '../../booking/_repo/booking_repository.dart';
-import '../../auth/_repo/user_repository.dart';
+import '../../auth/_managers/user_repository.dart';
 import '../../booking/_model/booking_summary.dart';
 import '../../auth/_model/user.dart';
 import '../../../_shared/utils/command.dart';

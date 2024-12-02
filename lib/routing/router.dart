@@ -6,13 +6,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-import '../_features/auth/_repo/auth_repository.dart';
 import '../_features/activities/view_models/activities_viewmodel.dart';
 import '../_features/activities/widgets/activities_screen.dart';
+import '../_features/auth/_managers/auth_manager_.dart';
 import '../_features/auth/login/view_models/login_viewmodel.dart';
 import '../_features/auth/login/widgets/login_screen.dart';
-import '../_features/booking/widgets/booking_screen.dart';
 import '../_features/booking/view_models/booking_viewmodel.dart';
+import '../_features/booking/widgets/booking_screen.dart';
 import '../_features/home/view_models/home_viewmodel.dart';
 import '../_features/home/widgets/home_screen.dart';
 import '../_features/results/view_models/results_viewmodel.dart';
@@ -26,7 +26,7 @@ import 'routes.dart';
 /// Listens to changes in [AuthTokenRepository] to redirect the user
 /// to /login when the user logs out.
 GoRouter router(
-  AuthRepository authRepository,
+  AuthManager authRepository,
 ) =>
     GoRouter(
       initialLocation: Routes.home,
@@ -137,7 +137,7 @@ GoRouter router(
 // From https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/redirection.dart
 Future<String?> _redirect(BuildContext context, GoRouterState state) async {
   // if the user is not logged in, they need to login
-  final bool loggedIn = await context.read<AuthRepository>().isAuthenticated;
+  final bool loggedIn = await context.read<AuthManager>().isAuthenticated;
   final bool loggingIn = state.matchedLocation == Routes.login;
   if (!loggedIn) {
     return Routes.login;

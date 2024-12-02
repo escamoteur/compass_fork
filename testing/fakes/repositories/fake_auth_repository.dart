@@ -2,10 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:compass_app/_features/auth/_repo/auth_repository.dart';
+import 'package:compass_app/_features/auth/_managers/auth_manager_.dart';
 import 'package:compass_app/_shared/utils/result.dart';
 
-class FakeAuthRepository extends AuthRepository {
+class FakeAuthRepository extends AuthManager {
   String? token;
 
   @override

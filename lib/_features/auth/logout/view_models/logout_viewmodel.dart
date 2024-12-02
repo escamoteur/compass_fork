@@ -2,21 +2,21 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import '../../_repo/auth_repository.dart';
 import '../../../../_shared/itinerary_config/_repo/itinerary_config_repository.dart';
 import '../../../../_shared/itinerary_config/itinerary_config.dart';
 import '../../../../_shared/utils/command.dart';
 import '../../../../_shared/utils/result.dart';
+import '../../_managers/auth_manager_.dart';
 
 class LogoutViewModel {
   LogoutViewModel({
-    required AuthRepository authRepository,
+    required AuthManager authRepository,
     required ItineraryConfigRepository itineraryConfigRepository,
   })  : _authLogoutRepository = authRepository,
         _itineraryConfigRepository = itineraryConfigRepository {
     logout = Command0(_logout);
   }
-  final AuthRepository _authLogoutRepository;
+  final AuthManager _authLogoutRepository;
   final ItineraryConfigRepository _itineraryConfigRepository;
   late Command0 logout;
 

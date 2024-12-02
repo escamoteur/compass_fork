@@ -13,8 +13,8 @@ class ItineraryConfigRepositoryMemory implements ItineraryConfigRepository {
   ItineraryConfig? _itineraryConfig;
 
   @override
-  Future<Result<ItineraryConfig>> getItineraryConfig() async {
-    return Result.ok(_itineraryConfig ?? const ItineraryConfig());
+  Future<ItineraryConfig> getItineraryConfig() async {
+    return _itineraryConfig ?? const ItineraryConfig();
   }
 
   @override

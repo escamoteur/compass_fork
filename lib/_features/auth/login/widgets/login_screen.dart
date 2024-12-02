@@ -8,7 +8,6 @@ import 'package:go_router/go_router.dart';
 import '../../../../routing/routes.dart';
 import '../../../../_shared/ui/localization/applocalization.dart';
 import '../../../../_shared/ui/themes/dimens.dart';
-import '../view_models/login_viewmodel.dart';
 import 'tilted_cards.dart';
 
 class LoginScreen extends StatefulWidget {
