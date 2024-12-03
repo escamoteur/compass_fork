@@ -2,11 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:compass_app/_shared/itinerary_config/_repo/itinerary_config_repository.dart';
+import 'package:compass_app/_shared/itinerary_config/__manager/itinerary_config_manager_.dart';
 import 'package:compass_app/_shared/itinerary_config/itinerary_config.dart';
 import 'package:flutter/foundation.dart';
 
-class FakeItineraryConfigRepository implements ItineraryConfigRepository {
+class FakeItineraryConfigRepository implements ItineraryConfigManager {
   FakeItineraryConfigRepository({this.itineraryConfig});
 
   ItineraryConfig? itineraryConfig;

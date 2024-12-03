@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 
 import '../_repo/continent_repository.dart';
-import '../../../_shared/itinerary_config/_repo/itinerary_config_repository.dart';
+import '../../../_shared/itinerary_config/__manager/itinerary_config_manager_.dart';
 import '../_model/continent.dart';
 import '../../../_shared/itinerary_config/itinerary_config.dart';
 import '../../../_shared/utils/command.dart';
@@ -19,7 +19,7 @@ import '../../../_shared/utils/result.dart';
 class SearchFormViewModel extends ChangeNotifier {
   SearchFormViewModel({
     required ContinentRepository continentRepository,
-    required ItineraryConfigRepository itineraryConfigRepository,
+    required ItineraryConfigManager itineraryConfigRepository,
   })  : _continentRepository = continentRepository,
         _itineraryConfigRepository = itineraryConfigRepository {
     updateItineraryConfig = Command0(_updateItineraryConfig);
@@ -28,7 +28,7 @@ class SearchFormViewModel extends ChangeNotifier {
 
   final _log = Logger('SearchFormViewModel');
   final ContinentRepository _continentRepository;
-  final ItineraryConfigRepository _itineraryConfigRepository;
+  final ItineraryConfigManager _itineraryConfigRepository;
   List<Continent> _continents = [];
   String? _selectedContinent;
   DateTimeRange? _dateRange;
@@ -84,7 +84,7 @@ class SearchFormViewModel extends ChangeNotifier {
   /// Load the list of continents and current itinerary config.
   late final Command0 load;
 
-  /// Store ViewModel data into [ItineraryConfigRepository] before navigating.
+  /// Store ViewModel data into [ItineraryConfigManager] before navigating.
   late final Command0 updateItineraryConfig;
 
   Future<void>> _load() async {

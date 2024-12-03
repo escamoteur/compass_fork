@@ -6,7 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_command/flutter_command.dart';
 import 'package:watch_it/watch_it.dart';
 
-import '../../../_shared/itinerary_config/_repo/itinerary_config_repository.dart';
+import '../../../_shared/itinerary_config/__manager/itinerary_config_manager_.dart';
 import '../../../_shared/itinerary_config/itinerary_config.dart';
 import '../_model/user.dart';
 
@@ -24,7 +24,7 @@ abstract class AuthManager extends ChangeNotifier {
 
   @mustCallSuper
   Future<void> logout() async {
-    await di<ItineraryConfigRepository>()
+    await di<ItineraryConfigManager>()
         .setItineraryConfig(const ItineraryConfig());
   }
 

@@ -5,7 +5,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:logging/logging.dart';
 
-import '../../../_shared/itinerary_config/_repo/itinerary_config_repository.dart';
+import '../../../_shared/itinerary_config/__manager/itinerary_config_manager_.dart';
 import '../../../_shared/itinerary_config/itinerary_config.dart';
 import '../../../_shared/utils/command.dart';
 import '../../../_shared/utils/result.dart';
@@ -17,7 +17,7 @@ import '../../search/_model/destination.dart';
 class ResultsViewModel extends ChangeNotifier {
   ResultsViewModel({
     required DestinationRepository destinationRepository,
-    required ItineraryConfigRepository itineraryConfigRepository,
+    required ItineraryConfigManager itineraryConfigRepository,
   })  : _destinationRepository = destinationRepository,
         _itineraryConfigRepository = itineraryConfigRepository {
     updateItineraryConfig = Command1<void, String>(_updateItineraryConfig);
@@ -28,7 +28,7 @@ class ResultsViewModel extends ChangeNotifier {
 
   final DestinationRepository _destinationRepository;
 
-  final ItineraryConfigRepository _itineraryConfigRepository;
+  final ItineraryConfigManager _itineraryConfigRepository;
 
   // Setters are private
   List<Destination> _destinations = [];
@@ -44,7 +44,7 @@ class ResultsViewModel extends ChangeNotifier {
   /// Perform search
   late final Command0 search;
 
-  /// Store ViewModel data into [ItineraryConfigRepository] before navigating.
+  /// Store ViewModel data into [ItineraryConfigManager] before navigating.
   late final Command1<void, String> updateItineraryConfig;
 
   Future<void> _search() async {

@@ -4,25 +4,20 @@
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
+import 'package:watch_it/watch_it.dart';
 
-import '../../auth/logout/view_models/logout_viewmodel.dart';
-import '../../auth/logout/widgets/logout_button.dart';
 import '../../../_shared/ui/localization/applocalization.dart';
 import '../../../_shared/ui/themes/dimens.dart';
-import '../view_models/home_viewmodel.dart';
+import '../../auth/_managers/auth_manager_.dart';
+import '../../auth/logout/widgets/logout_button.dart';
 
 class HomeHeader extends StatelessWidget {
-  const HomeHeader({
-    super.key,
-    required this.viewModel,
-  });
-
-  final HomeViewModel viewModel;
+  const HomeHeader({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final user = viewModel.user;
+    final user = di<AuthManager>().getCurrentUserCommand.value;
+
     if (user == null) {
       return const SizedBox();
     }
@@ -40,12 +35,7 @@ class HomeHeader extends StatelessWidget {
                 height: Dimens.of(context).profilePictureSize,
               ),
             ),
-            LogoutButton(
-              viewModel: LogoutViewModel(
-                authRepository: context.read(),
-                itineraryConfigRepository: context.read(),
-              ),
-            ),
+            LogoutButton(),
           ],
         ),
         const SizedBox(height: Dimens.paddingVertical),

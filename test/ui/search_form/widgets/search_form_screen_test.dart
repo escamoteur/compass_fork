@@ -7,7 +7,7 @@ import 'package:compass_app/_features/search/view_models/search_form_viewmodel.d
 import 'package:compass_app/_features/search/widgets/search_form_guests.dart';
 import 'package:compass_app/_features/search/widgets/search_form_screen.dart';
 import 'package:compass_app/_features/search/widgets/search_form_submit.dart';
-import 'package:compass_app/_shared/itinerary_config/_repo/itinerary_config_repository.dart';
+import 'package:compass_app/_shared/itinerary_config/__manager/itinerary_config_manager_.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -38,7 +38,7 @@ void main() {
         ChangeNotifierProvider.value(
           value: FakeAuthRepository() as AuthManager,
           child: Provider.value(
-            value: FakeItineraryConfigRepository() as ItineraryConfigRepository,
+            value: FakeItineraryConfigRepository() as ItineraryConfigManager,
             child: SearchFormScreen(viewModel: viewModel),
           ),
         ),

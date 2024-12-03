@@ -5,7 +5,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 
-import '../../../_shared/itinerary_config/_repo/itinerary_config_repository.dart';
+import '../../../_shared/itinerary_config/__manager/itinerary_config_manager_.dart';
 import '../../../_shared/utils/command.dart';
 import '../../../_shared/utils/result.dart';
 import '../_model/activity.dart';
@@ -14,7 +14,7 @@ import '../_repo/activity_repository.dart';
 class ActivitiesViewModel extends ChangeNotifier {
   ActivitiesViewModel({
     required ActivityRepository activityRepository,
-    required ItineraryConfigRepository itineraryConfigRepository,
+    required ItineraryConfigManager itineraryConfigRepository,
   })  : _activityRepository = activityRepository,
         _itineraryConfigRepository = itineraryConfigRepository {
     loadActivities = Command0(_loadActivities)..execute();
@@ -23,7 +23,7 @@ class ActivitiesViewModel extends ChangeNotifier {
 
   final _log = Logger('ActivitiesViewModel');
   final ActivityRepository _activityRepository;
-  final ItineraryConfigRepository _itineraryConfigRepository;
+  final ItineraryConfigManager _itineraryConfigRepository;
   List<Activity> _daytimeActivities = <Activity>[];
   List<Activity> _eveningActivities = <Activity>[];
   final Set<String> _selectedActivities = <String>{};

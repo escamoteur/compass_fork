@@ -41,7 +41,7 @@ class FakeBookingRepository implements BookingManager {
   }
 
   @override
-  Future<void> delete(int id) async {
+  Future<void> deleteBooking(int id) async {
     bookings.removeWhere((booking) => booking.id == id);
   }
 }

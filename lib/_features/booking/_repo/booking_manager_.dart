@@ -8,7 +8,7 @@ import 'package:flutter_command/flutter_command.dart';
 import 'package:logging/logging.dart';
 import 'package:watch_it/watch_it.dart';
 
-import '../../../_shared/itinerary_config/_repo/itinerary_config_repository.dart';
+import '../../../_shared/itinerary_config/__manager/itinerary_config_manager_.dart';
 import '../../../_shared/itinerary_config/itinerary_config.dart';
 import '../../../_shared/ui/ui/date_format_start_end.dart';
 import '../../activities/_repo/activity_repository.dart';
@@ -25,56 +25,75 @@ abstract class BookingManager {
 
   late final ValueListenable<bool> isBusy =
       createBookingCommand.isExecuting.mergeWith(
-    [loadBookingCommand.isExecuting],
+    [loadBookingCommand.isExecuting, deleteBookingCommand.isExecuting],
   );
 
   final ShareFunction _share;
   final _log = Logger('BookingViewModel');
 
   late final Command<void, void> createBookingCommand =
-      Command.createAsyncNoParamNoResult(_createBooking);
-
-  /// Loads booking by id
-  late final Command<int, void> loadBookingCommand =
-      Command.createAsyncNoResult(_load);
-
-  /// Share the current booking using the OS share dialog.
-  late final Command<void, void> shareBookingCommand =
-      Command.createAsyncNoParamNoResult(_shareBooking);
-
-  /// the current booking
-  ValueListenable<Booking?> get booking => _booking;
-  ValueNotifier<Booking?> _booking = ValueNotifier(null);
-
-  Future<void> _createBooking() async {
+      Command.createAsyncNoParamNoResult(() async {
     _log.fine('Loading booking');
     final itineraryConfig =
-        await di<ItineraryConfigRepository>().getItineraryConfig();
+        await di<ItineraryConfigManager>().getItineraryConfig();
     _log.fine('Loaded stored ItineraryConfig');
     _booking.value = await createFrom(itineraryConfig);
     _log.fine('Created Booking');
-  }
+  });
 
-  Future<void> _load(int id) async {
+  /// Loads booking by id
+  late final Command<int, void> loadBookingCommand =
+      Command.createAsyncNoResult((id) async {
     _booking.value = await getBooking(id);
     _log.fine('Loaded booking $id');
-  }
+  });
 
-  Future<void> _shareBooking() async {
-    final text = 'Trip to ${_booking.value!.destination.name}\n'
-        'on ${dateFormatStartEnd(DateTimeRange(start: _booking.value!.startDate, end: _booking.value!.endDate))}\n'
-        'Activities:\n'
-        '${_booking.value!.activity.map((a) => ' - ${a.name}').join('\n')}.';
+  late final Command<int, void> deleteBookingCommand =
+      Command.createAsyncNoResult((id) async {
+    await deleteBooking(id);
+    _log.fine('Deleted booking $id');
 
-    _log.info('Sharing booking: $text');
-    try {
-      await _share(text);
-      _log.fine('Shared booking');
-    } on Exception catch (error) {
-      _log.severe('Failed to share booking', error);
-      rethrow;
-    }
-  }
+    // After deleting the booking, we need to reload the bookings list.
+    // BookingRepository is the source of truth for bookings.
+    loadBookingsCommand.execute();
+    _log.fine('Reloaded bookings after deletion');
+  });
+
+  List<BookingSummary> get bookings => loadBookingsCommand.value;
+
+  late final Command<void, List<BookingSummary>> loadBookingsCommand =
+      Command.createAsyncNoParam(
+    () async {
+      final bookings = await getBookingsList();
+      _log.fine('Loaded bookings');
+      return bookings;
+    },
+    initialValue: [],
+  );
+
+  /// Share the current booking using the OS share dialog.
+  late final Command<void, void> shareBookingCommand =
+      Command.createAsyncNoParamNoResult(
+    () async {
+      final text = 'Trip to ${_booking.value!.destination.name}\n'
+          'on ${dateFormatStartEnd(DateTimeRange(start: _booking.value!.startDate, end: _booking.value!.endDate))}\n'
+          'Activities:\n'
+          '${_booking.value!.activity.map((a) => ' - ${a.name}').join('\n')}.';
+
+      _log.info('Sharing booking: $text');
+      try {
+        await _share(text);
+        _log.fine('Shared booking');
+      } on Exception catch (error) {
+        _log.severe('Failed to share booking', error);
+        rethrow;
+      }
+    },
+  );
+
+  /// the current booking
+  ValueListenable<Booking?> get booking => _booking;
+  final ValueNotifier<Booking?> _booking = ValueNotifier(null);
 
   /// Create [Booking] from a stored [ItineraryConfig]
   Future<Booking> createFrom(ItineraryConfig itineraryConfig) async {
@@ -140,7 +159,7 @@ abstract class BookingManager {
   Future<void> createBooking(Booking booking);
 
   /// Delete booking
-  Future<void> delete(int id);
+  Future<void> deleteBooking(int id);
 
   Future<List<Destination>> getDestinations();
 }

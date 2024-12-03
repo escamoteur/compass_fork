@@ -17,7 +17,7 @@ void main() {
 
     setUp(() {
       fakeApiClient = FakeApiClient();
-      bookingRepository = BookingRepositoryRemote(
+      bookingRepository = BookingManagerRemote(
         apiClient: fakeApiClient,
       );
     });
@@ -50,7 +50,7 @@ void main() {
       expect(result, isA<Ok<void>>());
 
       // Delete the booking
-      result = await bookingRepository.delete(0);
+      result = await bookingRepository.deleteBooking(0);
       expect(result, isA<Ok<void>>());
 
       // Check if the booking was deleted from the server

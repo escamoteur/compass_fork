@@ -5,7 +5,7 @@
 import 'package:compass_app/_features/auth/_managers/auth_manager_.dart';
 import 'package:compass_app/_features/home/view_models/home_viewmodel.dart';
 import 'package:compass_app/_features/home/widgets/home_screen.dart';
-import 'package:compass_app/_shared/itinerary_config/_repo/itinerary_config_repository.dart';
+import 'package:compass_app/_shared/itinerary_config/__manager/itinerary_config_manager_.dart';
 import 'package:compass_app/_shared/utils/result.dart';
 import 'package:compass_app/routing/routes.dart';
 import 'package:flutter/foundation.dart';
@@ -43,7 +43,7 @@ void main() {
         ChangeNotifierProvider.value(
           value: FakeAuthRepository() as AuthManager,
           child: Provider.value(
-            value: FakeItineraryConfigRepository() as ItineraryConfigRepository,
+            value: FakeItineraryConfigRepository() as ItineraryConfigManager,
             child: HomeScreen(viewModel: viewModel),
           ),
         ),
@@ -125,7 +125,7 @@ void main() {
 
 class _BadFakeBookingRepository extends FakeBookingRepository {
   @override
-  Future<void>> delete(int id) async {
+  Future<void>> deleteBooking(int id) async {
     return Result.error(Exception('Failed to delete booking'));
   }
 }

@@ -12,8 +12,8 @@ import '../_model/booking.dart';
 import '../_model/booking_summary.dart';
 import 'booking_manager_.dart';
 
-class BookingRepositoryLocal extends BookingManager {
-  BookingRepositoryLocal({
+class BookingManagerLocal extends BookingManager {
+  BookingManagerLocal({
     required LocalDataService localDataService,
     required super.share,
   }) : _localDataService = localDataService;
@@ -89,7 +89,7 @@ class BookingRepositoryLocal extends BookingManager {
   }
 
   @override
-  Future<void> delete(int id) async {
+  Future<void> deleteBooking(int id) async {
     _bookings.removeWhere((booking) => booking.id == id);
   }
 

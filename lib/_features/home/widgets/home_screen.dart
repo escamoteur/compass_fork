@@ -3,53 +3,33 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
+import 'package:flutter_command/flutter_command.dart';
 import 'package:go_router/go_router.dart';
+import 'package:watch_it/watch_it.dart';
 
-import '../../booking/_model/booking_summary.dart';
-import '../../../routing/routes.dart';
 import '../../../_shared/ui/localization/applocalization.dart';
 import '../../../_shared/ui/themes/dimens.dart';
 import '../../../_shared/ui/ui/date_format_start_end.dart';
 import '../../../_shared/ui/ui/error_indicator.dart';
-import '../view_models/home_viewmodel.dart';
+import '../../../routing/routes.dart';
+import '../../booking/_model/booking_summary.dart';
+import '../../booking/_repo/booking_manager_.dart';
 import 'home_title.dart';
 
 const String bookingButtonKey = 'booking-button';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({
-    super.key,
-    required this.viewModel,
-  });
-
-  final HomeViewModel viewModel;
-
-  @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-  @override
-  void initState() {
-    super.initState();
-    widget.viewModel.deleteBooking.addListener(_onResult);
-  }
-
-  @override
-  void didUpdateWidget(covariant HomeScreen oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    oldWidget.viewModel.deleteBooking.removeListener(_onResult);
-    widget.viewModel.deleteBooking.addListener(_onResult);
-  }
-
-  @override
-  void dispose() {
-    widget.viewModel.deleteBooking.removeListener(_onResult);
-    super.dispose();
-  }
+class HomeScreen extends WatchingWidget {
+  const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    registerHandler(
+        select: (BookingManager bookingManager) =>
+            bookingManager.deleteBookingCommand.results,
+        handler: (context, result, _) {
+          _onResult(context, result.hasData);
+        });
+
     return Scaffold(
       floatingActionButton: FloatingActionButton.extended(
         // Workaround for https://github.com/flutter/flutter/issues/115358#issuecomment-2117157419
@@ -62,83 +42,69 @@ class _HomeScreenState extends State<HomeScreen> {
       body: SafeArea(
         top: true,
         bottom: true,
-        child: ListenableBuilder(
-          listenable: widget.viewModel.load,
-          builder: (context, child) {
-            if (widget.viewModel.load.running) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-
-            if (widget.viewModel.load.error) {
-              return ErrorIndicator(
-                title: AppLocalization.of(context).errorWhileLoadingHome,
-                label: AppLocalization.of(context).tryAgain,
-                onPressed: widget.viewModel.load.execute,
-              );
-            }
-
-            return child!;
+        child: CommandBuilder(
+          command: di<BookingManager>().loadBookingsCommand,
+          whileExecuting: (context, _, __) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
           },
-          child: ListenableBuilder(
-            listenable: widget.viewModel,
-            builder: (context, _) {
-              return CustomScrollView(
-                slivers: [
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                        vertical: Dimens.of(context).paddingScreenVertical,
-                        horizontal: Dimens.of(context).paddingScreenHorizontal,
-                      ),
-                      child: HomeHeader(viewModel: widget.viewModel),
-                    ),
+          onError: (context, error, _, __) {
+            return ErrorIndicator(
+              title: AppLocalization.of(context).errorWhileLoadingHome,
+              label: AppLocalization.of(context).tryAgain,
+              onPressed: di<BookingManager>().loadBookingsCommand.execute,
+            );
+          },
+          onData: (context, bookings, _) => CustomScrollView(
+            slivers: [
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                    vertical: Dimens.of(context).paddingScreenVertical,
+                    horizontal: Dimens.of(context).paddingScreenHorizontal,
                   ),
-                  SliverList.builder(
-                    itemCount: widget.viewModel.bookings.length,
-                    itemBuilder: (_, index) => _Booking(
-                      key: ValueKey(widget.viewModel.bookings[index].id),
-                      booking: widget.viewModel.bookings[index],
-                      onTap: () => context.push(Routes.bookingWithId(
-                          widget.viewModel.bookings[index].id)),
-                      confirmDismiss: (_) async {
-                        // wait for command to complete
-                        await widget.viewModel.deleteBooking.execute(
-                          widget.viewModel.bookings[index].id,
-                        );
-                        // if command completed successfully, return true
-                        if (widget.viewModel.deleteBooking.completed) {
-                          // removes the dismissable from the list
-                          return true;
-                        } else {
-                          // the dismissable stays in the list
-                          return false;
-                        }
-                      },
-                    ),
-                  )
-                ],
-              );
-            },
+                  child: HomeHeader(),
+                ),
+              ),
+              SliverList.builder(
+                itemCount: bookings.length,
+                itemBuilder: (_, index) => _Booking(
+                  key: ValueKey(bookings[index].id),
+                  booking: bookings[index],
+                  onTap: () =>
+                      context.push(Routes.bookingWithId(bookings[index].id)),
+                  confirmDismiss: (_) async {
+                    try {
+                      // wait for command to complete
+                      await di<BookingManager>()
+                          .deleteBookingCommand
+                          .executeWithFuture(bookings[index].id);
+                      // if command completed successfully, return true
+                      // removes the dismissable from the list
+                      return true;
+                    } catch (e) {
+                      // the dismissable stays in the list
+                      return false;
+                    }
+                  },
+                ),
+              )
+            ],
           ),
         ),
       ),
     );
   }
 
-  void _onResult() {
-    if (widget.viewModel.deleteBooking.completed) {
-      widget.viewModel.deleteBooking.clearResult();
+  void _onResult(BuildContext context, bool success) {
+    if (success) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(AppLocalization.of(context).bookingDeleted),
         ),
       );
-    }
-
-    if (widget.viewModel.deleteBooking.error) {
-      widget.viewModel.deleteBooking.clearResult();
+    } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(AppLocalization.of(context).errorWhileDeletingBooking),

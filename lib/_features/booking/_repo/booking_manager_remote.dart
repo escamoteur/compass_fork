@@ -11,8 +11,8 @@ import '../_model/booking.dart';
 import '../_model/booking_summary.dart';
 import 'booking_manager_.dart';
 
-class BookingRepositoryRemote extends BookingManager {
-  BookingRepositoryRemote(
+class BookingManagerRemote extends BookingManager {
+  BookingManagerRemote(
       {
       //you and inject the apiClient for testing her otherwise it will use the default one
       ApiClient? apiClient,
@@ -38,23 +38,20 @@ class BookingRepositoryRemote extends BookingManager {
   @override
   Future<Booking> getBooking(int id) async {
     // Get booking by ID from server
-    final resultBooking = await _apiClient.getBooking(id);
-    final booking = resultBooking;
+    final booking = await _apiClient.getBooking(id);
 
     // Load destinations if not loaded yet
     if (_cachedDestinations == null) {
-      final resultDestination = await _apiClient.getDestinations();
-      _cachedDestinations = resultDestination;
+      _cachedDestinations = await _apiClient.getDestinations();
     }
 
     // Get destination for booking
     final destination = _cachedDestinations!
         .firstWhere((destination) => destination.ref == booking.destinationRef);
 
-    final resultActivities =
+    final activities =
         await _apiClient.getActivityByDestination(destination.ref);
-
-    final activities = resultActivities
+    final filteredActivities = activities
         .where((activity) => booking.activitiesRef.contains(activity.ref))
         .toList();
 
@@ -63,14 +60,13 @@ class BookingRepositoryRemote extends BookingManager {
       startDate: booking.startDate,
       endDate: booking.endDate,
       destination: destination,
-      activity: activities,
+      activity: filteredActivities,
     );
   }
 
   @override
   Future<List<BookingSummary>> getBookingsList() async {
-    final result = await _apiClient.getBookings();
-    final bookingsApi = result;
+    final bookingsApi = await _apiClient.getBookings();
     return bookingsApi
         .map(
           (bookingApi) => BookingSummary(
@@ -84,8 +80,8 @@ class BookingRepositoryRemote extends BookingManager {
   }
 
   @override
-  Future<void> delete(int id) async {
-    return _apiClient.deleteBooking(id);
+  Future<void> deleteBooking(int id) async {
+    await _apiClient.deleteBooking(id);
   }
 
   List<Destination>? _cachedData;
@@ -94,9 +90,8 @@ class BookingRepositoryRemote extends BookingManager {
   Future<List<Destination>> getDestinations() async {
     if (_cachedData == null) {
       // No cached data, request destinations
-      final result = await _apiClient.getDestinations();
-      _cachedData = result;
-      return result;
+      _cachedData = await _apiClient.getDestinations();
+      return _cachedData!;
     } else {
       // Return cached data if available
       return _cachedData!;
