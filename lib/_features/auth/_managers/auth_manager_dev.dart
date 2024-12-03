@@ -26,12 +26,12 @@ class AuthManagerDev extends AuthManager {
 
   /// Login is always successful in dev scenarios
   @override
-  late Command<({String email, String password}), void> loginCommand =
+  late final Command<({String email, String password}), void> loginCommand =
       Command.createAsyncNoResult((credentials) async {});
 
   @override
-  late Command<void, UserProxy?> getCurrentUserCommand =
-      Command.createAsyncNoParam(() async {
+  late final Command<void, UserProxy?> getCurrentUserCommand =
+      Command.createAsyncNoParam<UserProxy?>(() async {
     return _localDataService.getUser();
   }, initialValue: null);
 }

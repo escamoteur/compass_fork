@@ -4,14 +4,13 @@
 
 import 'package:compass_app/_features/booking/_repo/destination_repository.dart';
 import 'package:compass_app/_features/search/_model/destination.dart';
-import 'package:compass_app/_shared/utils/result.dart';
 import 'package:flutter/foundation.dart';
 
 import '../../models/destination.dart';
 
 class FakeDestinationRepository implements DestinationRepository {
   @override
-  Future<List<Destination>>> getDestinations() {
-    return SynchronousFuture(Result.ok([kDestination1, kDestination2]));
+  Future<List<Destination>> getDestinations() {
+    return SynchronousFuture([kDestination1, kDestination2]);
   }
 }

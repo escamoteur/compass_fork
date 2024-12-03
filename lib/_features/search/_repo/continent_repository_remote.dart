@@ -2,9 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import '../_model/continent.dart';
-import '../../../_shared/utils/result.dart';
 import '../../../_shared/services/api/api_client.dart';
+import '../../../_shared/utils/result.dart';
+import '../_model/continent.dart';
 import 'continent_repository.dart';
 
 /// Remote data source for [Continent].
@@ -20,13 +20,13 @@ class ContinentRepositoryRemote implements ContinentRepository {
   List<Continent>? _cachedData;
 
   @override
-  Future<List<Continent>>> getContinents() async {
+  Future<List<Continent>> getContinents() async {
     if (_cachedData == null) {
       // No cached data, request continents
       final result = await _apiClient.getContinents();
       if (result is Ok) {
         // Store value if result Ok
-        _cachedData = result.asOk.value;
+        _cachedData = result;
       }
       return result;
     } else {

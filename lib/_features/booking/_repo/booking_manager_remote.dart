@@ -32,19 +32,19 @@ class BookingRepositoryRemote extends BookingManager {
       destinationRef: booking.destination.ref,
       activitiesRef: booking.activity.map((activity) => activity.ref).toList(),
     );
-    return _apiClient.postBooking(bookingApiModel);
+    await _apiClient.postBooking(bookingApiModel);
   }
 
   @override
   Future<Booking> getBooking(int id) async {
     // Get booking by ID from server
     final resultBooking = await _apiClient.getBooking(id);
-    final booking = resultBooking.asOk.value;
+    final booking = resultBooking;
 
     // Load destinations if not loaded yet
     if (_cachedDestinations == null) {
       final resultDestination = await _apiClient.getDestinations();
-      _cachedDestinations = resultDestination.asOk.value;
+      _cachedDestinations = resultDestination;
     }
 
     // Get destination for booking
@@ -54,7 +54,7 @@ class BookingRepositoryRemote extends BookingManager {
     final resultActivities =
         await _apiClient.getActivityByDestination(destination.ref);
 
-    final activities = resultActivities.asOk.value
+    final activities = resultActivities
         .where((activity) => booking.activitiesRef.contains(activity.ref))
         .toList();
 
@@ -70,7 +70,7 @@ class BookingRepositoryRemote extends BookingManager {
   @override
   Future<List<BookingSummary>> getBookingsList() async {
     final result = await _apiClient.getBookings();
-    final bookingsApi = result.asOk.value;
+    final bookingsApi = result;
     return bookingsApi
         .map(
           (bookingApi) => BookingSummary(

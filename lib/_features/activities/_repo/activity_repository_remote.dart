@@ -2,9 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import '../_model/activity.dart';
-import '../../../_shared/utils/result.dart';
 import '../../../_shared/services/api/api_client.dart';
+import '../../../_shared/utils/result.dart';
+import '../_model/activity.dart';
 import 'activity_repository.dart';
 
 /// Remote data source for [Activity].
@@ -20,12 +20,12 @@ class ActivityRepositoryRemote implements ActivityRepository {
   final Map<String, List<Activity>> _cachedData = {};
 
   @override
-  Future<List<Activity>>> getByDestination(String ref) async {
+  Future<List<Activity>> getByDestination(String ref) async {
     if (!_cachedData.containsKey(ref)) {
       // No cached data, request activities
       final result = await _apiClient.getActivityByDestination(ref);
       if (result is Ok) {
-        _cachedData[ref] = result.asOk.value;
+        _cachedData[ref] = result;
       }
       return result;
     } else {

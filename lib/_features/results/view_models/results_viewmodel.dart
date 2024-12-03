@@ -2,15 +2,15 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:flutter/cupertino.dart';
 import 'package:logging/logging.dart';
 
-import '../../booking/_repo/destination_repository.dart';
 import '../../../_shared/itinerary_config/_repo/itinerary_config_repository.dart';
-import '../../search/_model/destination.dart';
 import '../../../_shared/itinerary_config/itinerary_config.dart';
 import '../../../_shared/utils/command.dart';
 import '../../../_shared/utils/result.dart';
-import 'package:flutter/cupertino.dart';
+import '../../booking/_repo/destination_repository.dart';
+import '../../search/_model/destination.dart';
 
 /// Results screen view model
 /// Based on https://docs.flutter.dev/get-started/fwe/state-management#using-mvvm-for-your-applications-architecture
@@ -47,7 +47,7 @@ class ResultsViewModel extends ChangeNotifier {
   /// Store ViewModel data into [ItineraryConfigRepository] before navigating.
   late final Command1<void, String> updateItineraryConfig;
 
-  Future<void>> _search() async {
+  Future<void> _search() async {
     // Load current itinerary config
     final resultConfig = await _itineraryConfigRepository.getItineraryConfig();
     if (resultConfig is Error) {
@@ -57,7 +57,7 @@ class ResultsViewModel extends ChangeNotifier {
       );
       return resultConfig;
     }
-    _itineraryConfig = resultConfig.asOk.value;
+    _itineraryConfig = resultConfig;
     notifyListeners();
 
     final result = await _destinationRepository.getDestinations();
@@ -82,7 +82,7 @@ class ResultsViewModel extends ChangeNotifier {
     return result;
   }
 
-  Future<void>> _updateItineraryConfig(String destinationRef) async {
+  Future<void> _updateItineraryConfig(String destinationRef) async {
     assert(destinationRef.isNotEmpty, "destinationRef should not be empty");
 
     final resultConfig = await _itineraryConfigRepository.getItineraryConfig();
@@ -94,7 +94,7 @@ class ResultsViewModel extends ChangeNotifier {
       return resultConfig;
     }
 
-    final itineraryConfig = resultConfig.asOk.value;
+    final itineraryConfig = resultConfig;
     final result = await _itineraryConfigRepository
         .setItineraryConfig(itineraryConfig.copyWith(
       destination: destinationRef,

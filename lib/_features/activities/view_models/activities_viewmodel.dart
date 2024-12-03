@@ -5,11 +5,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 
-import '../_repo/activity_repository.dart';
 import '../../../_shared/itinerary_config/_repo/itinerary_config_repository.dart';
-import '../_model/activity.dart';
 import '../../../_shared/utils/command.dart';
 import '../../../_shared/utils/result.dart';
+import '../_model/activity.dart';
+import '../_repo/activity_repository.dart';
 
 class ActivitiesViewModel extends ChangeNotifier {
   ActivitiesViewModel({
@@ -43,7 +43,7 @@ class ActivitiesViewModel extends ChangeNotifier {
   /// Save list [selectedActivities] into itinerary configuration.
   late final Command0 saveActivities;
 
-  Future<void>> _loadActivities() async {
+  Future<void> _loadActivities() async {
     final result = await _itineraryConfigRepository.getItineraryConfig();
     if (result is Error) {
       _log.warning(
@@ -53,13 +53,13 @@ class ActivitiesViewModel extends ChangeNotifier {
       return result;
     }
 
-    final destinationRef = result.asOk.value.destination;
+    final destinationRef = result.destination;
     if (destinationRef == null) {
       _log.severe('Destination missing in ItineraryConfig');
       return Result.error(Exception('Destination not found'));
     }
 
-    _selectedActivities.addAll(result.asOk.value.activities);
+    _selectedActivities.addAll(result.activities);
 
     final resultActivities =
         await _activityRepository.getByDestination(destinationRef);
@@ -118,7 +118,7 @@ class ActivitiesViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void>> _saveActivities() async {
+  Future<void> _saveActivities() async {
     final resultConfig = await _itineraryConfigRepository.getItineraryConfig();
     if (resultConfig is Error) {
       _log.warning(
@@ -128,7 +128,7 @@ class ActivitiesViewModel extends ChangeNotifier {
       return resultConfig;
     }
 
-    final itineraryConfig = resultConfig.asOk.value;
+    final itineraryConfig = resultConfig;
     final result = await _itineraryConfigRepository.setItineraryConfig(
         itineraryConfig.copyWith(activities: _selectedActivities.toList()));
     if (result is Error) {

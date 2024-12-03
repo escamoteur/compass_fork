@@ -11,16 +11,15 @@ import 'package:compass_app/_shared/services/api/model/booking/booking_api_model
 import 'package:compass_app/_shared/services/api/model/login_request/login_request.dart';
 import 'package:compass_app/_shared/services/api/model/login_response/login_response.dart';
 import 'package:compass_app/_shared/services/api/model/user/user_api_model.dart';
-import 'package:compass_app/_shared/utils/result.dart';
 import 'package:http/src/response.dart';
 
 class FakeAuthApiClient implements AuthApiClient {
   @override
-  Future<LoginResponse>> login(LoginRequest loginRequest) async {
+  Future<LoginResponse> login(LoginRequest loginRequest) async {
     if (loginRequest.email == 'EMAIL' && loginRequest.password == 'PASSWORD') {
-      return Result.ok(const LoginResponse(token: 'TOKEN', userId: '123'));
+      return const LoginResponse(token: 'TOKEN', userId: '123');
     }
-    return Result.error(Exception('ERROR!'));
+    throw Exception('ERROR!');
   }
 
   @override
@@ -34,7 +33,7 @@ class FakeAuthApiClient implements AuthApiClient {
   }
 
   @override
-  Future<void>> deleteBooking(int id) {
+  Future<void> deleteBooking(int id) {
     throw UnimplementedError();
   }
 
@@ -44,32 +43,32 @@ class FakeAuthApiClient implements AuthApiClient {
   }
 
   @override
-  Future<List<Activity>>> getActivityByDestination(String ref) {
+  Future<List<Activity>> getActivityByDestination(String ref) {
     throw UnimplementedError();
   }
 
   @override
-  Future<BookingApiModel>> getBooking(int id) {
+  Future<BookingApiModel> getBooking(int id) {
     throw UnimplementedError();
   }
 
   @override
-  Future<List<BookingApiModel>>> getBookings() {
+  Future<List<BookingApiModel>> getBookings() {
     throw UnimplementedError();
   }
 
   @override
-  Future<List<Continent>>> getContinents() {
+  Future<List<Continent>> getContinents() {
     throw UnimplementedError();
   }
 
   @override
-  Future<List<Destination>>> getDestinations() {
+  Future<List<Destination>> getDestinations() {
     throw UnimplementedError();
   }
 
   @override
-  Future<UserApiModel>> getUser() {
+  Future<UserApiModel> getUser() {
     throw UnimplementedError();
   }
 
@@ -79,7 +78,7 @@ class FakeAuthApiClient implements AuthApiClient {
   }
 
   @override
-  Future<BookingApiModel>> postBooking(BookingApiModel booking) {
+  Future<BookingApiModel> postBooking(BookingApiModel booking) {
     throw UnimplementedError();
   }
 }

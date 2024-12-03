@@ -10,7 +10,7 @@ import '../../models/user.dart';
 
 class FakeUserRepository implements UserRepository {
   @override
-  Future<UserProxy>> getUser() async {
+  Future<UserProxy> getUser() async {
     return Result.ok(user);
   }
 }

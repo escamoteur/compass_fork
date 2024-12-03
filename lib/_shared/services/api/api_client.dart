@@ -11,7 +11,6 @@ import 'package:http/io_client.dart';
 import '../../../_features/activities/_model/activity.dart';
 import '../../../_features/search/_model/continent.dart';
 import '../../../_features/search/_model/destination.dart';
-import '../../utils/result.dart';
 import 'model/booking/booking_api_model.dart';
 import 'model/login_request/login_request.dart';
 import 'model/login_response/login_response.dart';
@@ -80,19 +79,18 @@ class ApiClient {
     return request;
   }
 
-  Future<List<Continent>>> getContinents() async {
+  Future<List<Continent>> getContinents() async {
     try {
       final response = await get('/continent');
       if (response.statusCode == 200) {
         final stringData = utf8.decode(response.bodyBytes);
         final json = jsonDecode(stringData) as List<dynamic>;
-        return Result.ok(
-            json.map((element) => Continent.fromJson(element)).toList());
+        return json.map((element) => Continent.fromJson(element)).toList();
       } else {
-        return Result.error(const HttpException("Invalid response"));
+        throw HttpException("Invalid response");
       }
     } on Exception catch (error) {
-      return Result.error(error);
+      throw error;
     }
   }
 
@@ -102,77 +100,72 @@ class ApiClient {
       if (response.statusCode == 200) {
         final stringData = utf8.decode(response.bodyBytes);
         final json = jsonDecode(stringData) as List<dynamic>;
-        return Result.ok(
-            json.map((element) => Destination.fromJson(element)).toList());
+        return json.map((element) => Destination.fromJson(element)).toList();
       } else {
-        return Result.error(const HttpException("Invalid response"));
+        throw HttpException("Invalid response");
       }
     } on Exception catch (error) {
-      return Result.error(error);
+      throw error;
     }
   }
 
-  Future<List<Activity>>> getActivityByDestination(String ref) async {
+  Future<List<Activity>> getActivityByDestination(String ref) async {
     try {
       final response = await get('/destination/$ref/activity');
       if (response.statusCode == 200) {
         final stringData = utf8.decode(response.bodyBytes);
         final json = jsonDecode(stringData) as List<dynamic>;
-        final activities =
-            json.map((element) => Activity.fromJson(element)).toList();
-        return Result.ok(activities);
+        return json.map((element) => Activity.fromJson(element)).toList();
       } else {
-        return Result.error(const HttpException("Invalid response"));
+        throw HttpException("Invalid response");
       }
     } on Exception catch (error) {
-      return Result.error(error);
+      throw error;
     }
   }
 
-  Future<List<BookingApiModel>>> getBookings() async {
+  Future<List<BookingApiModel>> getBookings() async {
     try {
       final response = await get('/booking');
       if (response.statusCode == 200) {
         final stringData = utf8.decode(response.bodyBytes);
         final json = jsonDecode(stringData) as List<dynamic>;
-        final bookings =
-            json.map((element) => BookingApiModel.fromJson(element)).toList();
-        return Result.ok(bookings);
+        return json
+            .map((element) => BookingApiModel.fromJson(element))
+            .toList();
       } else {
-        return Result.error(const HttpException("Invalid response"));
+        throw HttpException("Invalid response");
       }
     } on Exception catch (error) {
-      return Result.error(error);
+      throw error;
     }
   }
 
-  Future<BookingApiModel>> getBooking(int id) async {
+  Future<BookingApiModel> getBooking(int id) async {
     try {
       final response = await get('/booking/$id');
       if (response.statusCode == 200) {
         final stringData = utf8.decode(response.bodyBytes);
-        final booking = BookingApiModel.fromJson(jsonDecode(stringData));
-        return Result.ok(booking);
+        return BookingApiModel.fromJson(jsonDecode(stringData));
       } else {
-        return Result.error(const HttpException("Invalid response"));
+        throw HttpException("Invalid response");
       }
     } on Exception catch (error) {
-      return Result.error(error);
+      throw error;
     }
   }
 
-  Future<BookingApiModel>> postBooking(BookingApiModel booking) async {
+  Future<BookingApiModel> postBooking(BookingApiModel booking) async {
     try {
       final response = await post('/booking', jsonEncode(booking));
       if (response.statusCode == 201) {
         final stringData = utf8.decode(response.bodyBytes);
-        final booking = BookingApiModel.fromJson(jsonDecode(stringData));
-        return Result.ok(booking);
+        return BookingApiModel.fromJson(jsonDecode(stringData));
       } else {
-        return Result.error(const HttpException("Invalid response"));
+        throw HttpException("Invalid response");
       }
     } on Exception catch (error) {
-      return Result.error(error);
+      throw error;
     }
   }
 
@@ -187,17 +180,17 @@ class ApiClient {
     }
   }
 
-  Future<void>> deleteBooking(int id) async {
+  Future<void> deleteBooking(int id) async {
     try {
       final response = await delete('/booking/$id');
       // Response 204 "No Content", delete was successful
       if (response.statusCode == 204) {
-        return Result.ok(null);
+        return;
       } else {
-        return Result.error(const HttpException("Invalid response"));
+        throw HttpException("Invalid response");
       }
     } on Exception catch (error) {
-      return Result.error(error);
+      throw error;
     }
   }
 
