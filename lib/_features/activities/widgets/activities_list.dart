@@ -3,28 +3,23 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
+import 'package:watch_it/watch_it.dart';
 
 import '../../../_shared/ui/themes/dimens.dart';
-import '../view_models/activities_viewmodel.dart';
+import '../_managers/activity_manager_.dart';
+import '../_model/activity.dart';
 import 'activity_entry.dart';
-import 'activity_time_of_day.dart';
 
 class ActivitiesList extends StatelessWidget {
   const ActivitiesList({
     super.key,
-    required this.viewModel,
-    required this.activityTimeOfDay,
+    required this.activities,
   });
 
-  final ActivitiesViewModel viewModel;
-  final ActivityTimeOfDay activityTimeOfDay;
+  final List<Activity> activities;
 
   @override
   Widget build(BuildContext context) {
-    final list = switch (activityTimeOfDay) {
-      ActivityTimeOfDay.daytime => viewModel.daytimeActivities,
-      ActivityTimeOfDay.evening => viewModel.eveningActivities,
-    };
     return SliverPadding(
       padding: EdgeInsets.only(
         top: Dimens.paddingVertical,
@@ -35,25 +30,27 @@ class ActivitiesList extends StatelessWidget {
       sliver: SliverList(
         delegate: SliverChildBuilderDelegate(
           (context, index) {
-            final activity = list[index];
+            final activity = activities[index];
             return Padding(
-              padding:
-                  EdgeInsets.only(bottom: index < list.length - 1 ? 20 : 0),
+              padding: EdgeInsets.only(
+                  bottom: index < activities.length - 1 ? 20 : 0),
               child: ActivityEntry(
                 key: ValueKey(activity.ref),
                 activity: activity,
-                selected: viewModel.selectedActivities.contains(activity.ref),
+                selected: di<ActivityManager>()
+                    .selectedActivities
+                    .contains(activity.ref),
                 onChanged: (value) {
                   if (value!) {
-                    viewModel.addActivity(activity.ref);
+                    di<ActivityManager>().addActivity(activity.ref);
                   } else {
-                    viewModel.removeActivity(activity.ref);
+                    di<ActivityManager>().removeActivity(activity.ref);
                   }
                 },
               ),
             );
           },
-          childCount: list.length,
+          childCount: activities.length,
         ),
       ),
     );

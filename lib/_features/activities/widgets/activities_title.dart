@@ -6,38 +6,23 @@ import 'package:flutter/material.dart';
 
 import '../../../_shared/ui/localization/applocalization.dart';
 import '../../../_shared/ui/themes/dimens.dart';
-import '../view_models/activities_viewmodel.dart';
 import 'activity_time_of_day.dart';
 
 class ActivitiesTitle extends StatelessWidget {
   const ActivitiesTitle({
     super.key,
-    required this.activityTimeOfDay,
-    required this.viewModel,
+    required this.title,
   });
 
-  final ActivitiesViewModel viewModel;
-  final ActivityTimeOfDay activityTimeOfDay;
+  final String title;
 
   @override
   Widget build(BuildContext context) {
-    final list = switch (activityTimeOfDay) {
-      ActivityTimeOfDay.daytime => viewModel.daytimeActivities,
-      ActivityTimeOfDay.evening => viewModel.eveningActivities,
-    };
-    if (list.isEmpty) {
-      return const SliverToBoxAdapter(child: SizedBox());
-    }
     return SliverToBoxAdapter(
       child: Padding(
         padding: Dimens.of(context).edgeInsetsScreenHorizontal,
-        child: Text(_label(context)),
+        child: Text(title),
       ),
     );
   }
-
-  String _label(BuildContext context) => switch (activityTimeOfDay) {
-        ActivityTimeOfDay.daytime => AppLocalization.of(context).daytime,
-        ActivityTimeOfDay.evening => AppLocalization.of(context).evening,
-      };
 }

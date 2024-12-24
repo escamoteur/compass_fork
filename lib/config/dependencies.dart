@@ -5,9 +5,9 @@
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 
-import '../_features/activities/_repo/activity_repository.dart';
-import '../_features/activities/_repo/activity_repository_local.dart';
-import '../_features/activities/_repo/activity_repository_remote.dart';
+import '../_features/activities/_managers/activity_manager_.dart';
+import '../_features/activities/_managers/activity_manager_local.dart';
+import '../_features/activities/_managers/activity_manager_remote.dart';
 import '../_features/auth/_managers/auth_manager_.dart';
 import '../_features/auth/_managers/auth_manager_dev.dart';
 import '../_features/auth/_managers/auth_manager_remote.dart';
@@ -79,9 +79,9 @@ List<SingleChildWidget> get providersRemote {
       ) as ContinentRepository,
     ),
     Provider(
-      create: (context) => ActivityRepositoryRemote(
+      create: (context) => ActivitManagerRemote(
         apiClient: context.read(),
-      ) as ActivityRepository,
+      ) as ActivityManager,
     ),
     Provider.value(
       value: ItineraryConfigManagerMemory() as ItineraryConfigManager,
@@ -122,9 +122,9 @@ List<SingleChildWidget> get providersLocal {
       ) as ContinentRepository,
     ),
     Provider(
-      create: (context) => ActivityRepositoryLocal(
+      create: (context) => ActivityManagerLocal(
         localDataService: context.read(),
-      ) as ActivityRepository,
+      ) as ActivityManager,
     ),
     Provider(
       create: (context) => BookingManagerLocal(

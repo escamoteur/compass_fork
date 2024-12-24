@@ -11,7 +11,7 @@ import 'package:watch_it/watch_it.dart';
 import '../../../_shared/itinerary_config/__manager/itinerary_config_manager_.dart';
 import '../../../_shared/itinerary_config/itinerary_config.dart';
 import '../../../_shared/ui/ui/date_format_start_end.dart';
-import '../../activities/_repo/activity_repository.dart';
+import '../../activities/_managers/activity_manager_.dart';
 import '../../search/_model/destination.dart';
 import '../_model/booking.dart';
 import '../_model/booking_summary.dart';
@@ -112,7 +112,7 @@ abstract class BookingManager {
       _log.warning('Activities are not set');
       throw Exception('Activities are not set');
     }
-    final activitiesResult = await di<ActivityRepository>().getByDestination(
+    final activitiesResult = await di<ActivityManager>().getByDestination(
       itineraryConfig.destination!,
     );
 

@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:compass_app/_features/activities/_repo/activity_repository.dart';
-import 'package:compass_app/_features/activities/_repo/activity_repository_remote.dart';
+import 'package:compass_app/_features/activities/_managers/activity_manager_.dart';
+import 'package:compass_app/_features/activities/_managers/activity_manager_remote.dart';
 import 'package:compass_app/_shared/utils/result.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -12,11 +12,11 @@ import '../../../../testing/fakes/services/fake_api_client.dart';
 void main() {
   group('ActivityRepositoryRemote tests', () {
     late FakeApiClient apiClient;
-    late ActivityRepository repository;
+    late ActivityManager repository;
 
     setUp(() {
       apiClient = FakeApiClient();
-      repository = ActivityRepositoryRemote(apiClient: apiClient);
+      repository = ActivitManagerRemote(apiClient: apiClient);
     });
 
     test('should get activities for destination', () async {
