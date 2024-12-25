@@ -57,7 +57,7 @@ class SearchFormSubmit extends WatchingWidget {
   }
 
   void _onResult(BuildContext context, CommandResult result, cancel) {
-    if (!result.isExecuting && !result.hasError) {
+    if (result.isSuccess) {
       context.go(Routes.results);
     }
     if (result.hasError) {

@@ -28,7 +28,9 @@ class SearchFormScreen extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    callOnce((_) => di<SearchManager>().loadDataCommand.execute());
+    callOnce((_) {
+      di<SearchManager>().loadDataCommand.execute();
+    });
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, r) {

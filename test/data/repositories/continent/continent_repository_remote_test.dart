@@ -2,9 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:compass_app/_features/search/_manager/search_manager_remote.dart';
 import 'package:compass_app/_features/search/_manager/search_manager_.dart';
-import 'package:compass_app/_shared/utils/result.dart';
+import 'package:compass_app/_features/search/_manager/search_manager_remote.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../../../testing/fakes/services/fake_api_client.dart';
@@ -16,17 +15,14 @@ void main() {
 
     setUp(() {
       apiClient = FakeApiClient();
-      repository = ContinentRepositoryRemote(apiClient: apiClient);
+      repository = SearchManagerRemote(apiClient: apiClient);
     });
 
     test('should get continents', () async {
       final result = await repository.getContinents();
-      expect(result, isA<Ok>());
+      expect(result.length, 3);
 
-      final list = result.asOk.value;
-      expect(list.length, 3);
-
-      final destination = list.first;
+      final destination = result.first;
       expect(destination.name, 'CONTINENT');
 
       // Only one request happened
@@ -36,11 +32,10 @@ void main() {
     test('should get continents from cache', () async {
       // Request continents once
       var result = await repository.getContinents();
-      expect(result, isA<Ok>());
 
       // Request continents another time
       result = await repository.getContinents();
-      expect(result, isA<Ok>());
+      expect(result.length, 3);
 
       // Only one request happened
       expect(apiClient.requestCount, 1);

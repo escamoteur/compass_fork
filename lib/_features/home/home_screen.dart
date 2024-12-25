@@ -12,8 +12,8 @@ import '../../_shared/ui/themes/dimens.dart';
 import '../../_shared/ui/ui/date_format_start_end.dart';
 import '../../_shared/ui/ui/error_indicator.dart';
 import '../../routing/routes.dart';
-import '../booking/_model/booking_summary.dart';
 import '../booking/_manager/booking_manager_.dart';
+import '../booking/_model/booking_summary.dart';
 import 'home_title.dart';
 
 const String bookingButtonKey = 'booking-button';
@@ -27,9 +27,8 @@ class HomeScreen extends WatchingWidget {
         select: (BookingManager bookingManager) =>
             bookingManager.deleteBookingCommand.results,
         handler: (context, result, _) {
-          _onResult(context, result.hasData);
+          _onResult(context, result);
         });
-
     return Scaffold(
       floatingActionButton: FloatingActionButton.extended(
         // Workaround for https://github.com/flutter/flutter/issues/115358#issuecomment-2117157419
@@ -97,14 +96,14 @@ class HomeScreen extends WatchingWidget {
     );
   }
 
-  void _onResult(BuildContext context, bool success) {
-    if (success) {
+  void _onResult(BuildContext context, CommandResult result) {
+    if (result.isSuccess) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(AppLocalization.of(context).bookingDeleted),
         ),
       );
-    } else {
+    } else if (result.hasError) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(AppLocalization.of(context).errorWhileDeletingBooking),

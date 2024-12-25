@@ -33,7 +33,12 @@ class _ResultsScreenState extends State<ResultsScreen> {
     () async {
       final config = await di<ItineraryConfigManager>().getItineraryConfig();
       final destinations = await di<BookingManager>().getDestinations();
-      return (config: config, destinations: destinations);
+      return (
+        config: config,
+        destinations: destinations
+            .where((destination) => destination.continent == config.continent)
+            .toList()
+      );
     },
     initialValue: null,
   );
@@ -64,7 +69,9 @@ class _ResultsScreenState extends State<ResultsScreen> {
   Widget build(BuildContext context) {
     registerHandler(
         target: _updateItineraryConfigWithDestinationsCommand,
-        handler: (context, newValue, cancel) => context.go(Routes.activities));
+        handler: (context, newValue, cancel) {
+          context.go(Routes.activities);
+        });
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, r) {

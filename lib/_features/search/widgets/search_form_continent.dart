@@ -42,7 +42,7 @@ class SearchFormContinent extends StatelessWidget {
             onPressed: di<SearchManager>().loadDataCommand.execute,
           ),
         ),
-        onData: (context, data, param) => ListenableBuilder(
+        onSuccess: (context, param) => ListenableBuilder(
             listenable: di<SearchManager>(),
             builder: (context, snapshot) {
               return ListView.separated(
@@ -81,7 +81,7 @@ class _CarouselItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final searchManager = di<SearchManager>();
-    final _selected = searchManager.selectedContinent == null ||
+    final selected = searchManager.selectedContinent == null ||
         searchManager.selectedContinent == name;
     return SizedBox(
       width: 140,
@@ -123,7 +123,7 @@ class _CarouselItem extends StatelessWidget {
             // Overlay when other continent is selected
             Positioned.fill(
               child: AnimatedOpacity(
-                opacity: _selected ? 0 : 0.7,
+                opacity: selected ? 0 : 0.7,
                 duration: kThemeChangeDuration,
                 child: DecoratedBox(
                   decoration: BoxDecoration(

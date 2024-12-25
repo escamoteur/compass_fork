@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:compass_app/_shared/services/api/auth_api_client.dart';
+import 'package:compass_app/_shared/services/api/api_client.dart';
 import 'package:compass_app/_shared/services/api/model/login_request/login_request.dart';
 import 'package:compass_app/_shared/services/api/model/login_response/login_response.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -12,11 +12,11 @@ import '../../../../testing/mocks.dart';
 void main() {
   group('AuthApiClient', () {
     late MockHttpClient mockHttpClient;
-    late AuthApiClient apiClient;
+    late ApiClient apiClient;
 
     setUp(() {
       mockHttpClient = MockHttpClient();
-      apiClient = AuthApiClient(clientFactory: () => mockHttpClient);
+      apiClient = ApiClient(clientFactory: () => mockHttpClient);
     });
 
     test('should post login', () async {
@@ -35,7 +35,7 @@ void main() {
           password: 'PASSWORD',
         ),
       );
-      expect(result.asOk.value, loginResponse);
+      expect(result, loginResponse);
     });
   });
 }

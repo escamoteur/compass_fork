@@ -26,7 +26,7 @@ class ActivitiesScreen extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     registerHandler(
-        select: (ActivityManager m) => m.loadActivitiesCommand,
+        select: (ActivityManager m) => m.saveActivitiesCommand,
         handler: (context, _, __) {
           context.go(Routes.booking);
         });
@@ -55,12 +55,9 @@ class ActivitiesScreen extends WatchingWidget {
                   ),
                 ),
               ),
-              onData: (context, data, param) => Expanded(
+              onSuccess: (context, param) => Expanded(
                 child: CustomScrollView(
                   slivers: [
-                    const SliverToBoxAdapter(
-                      child: ActivitiesHeader(),
-                    ),
                     if (di<ActivityManager>().daytimeActivities.isNotEmpty) ...[
                       ActivitiesTitle(
                         title: AppLocalization.of(context).daytime,
@@ -112,6 +109,8 @@ class _BottomArea extends WatchingWidget {
           }
         });
 
+    final selectedActivities = watchIt<ActivityManager>().selectedActivities;
+
     return SafeArea(
       bottom: true,
       child: Material(
@@ -127,13 +126,12 @@ class _BottomArea extends WatchingWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                AppLocalization.of(context)
-                    .selected(di<ActivityManager>().selectedActivities.length),
+                AppLocalization.of(context).selected(selectedActivities.length),
                 style: Theme.of(context).textTheme.labelLarge,
               ),
               FilledButton(
                 key: const Key(confirmButtonKey),
-                onPressed: di<ActivityManager>().selectedActivities.isNotEmpty
+                onPressed: selectedActivities.isNotEmpty
                     ? di<ActivityManager>().saveActivitiesCommand.execute
                     : null,
                 child: Text(AppLocalization.of(context).confirm),

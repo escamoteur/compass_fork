@@ -4,7 +4,6 @@
 
 import 'package:compass_app/_features/activities/_managers/activity_manager_.dart';
 import 'package:compass_app/_features/activities/_managers/activity_manager_remote.dart';
-import 'package:compass_app/_shared/utils/result.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../../../testing/fakes/services/fake_api_client.dart';
@@ -21,12 +20,10 @@ void main() {
 
     test('should get activities for destination', () async {
       final result = await repository.getByDestination('alaska');
-      expect(result, isA<Ok>());
 
-      final list = result.asOk.value;
-      expect(list.length, 1);
+      expect(result.length, 1);
 
-      final destination = list.first;
+      final destination = result.first;
       expect(destination.name, 'Glacier Trekking and Ice Climbing');
 
       // Only one request happened
@@ -36,11 +33,9 @@ void main() {
     test('should get destinations from cache', () async {
       // Request destination once
       var result = await repository.getByDestination('alaska');
-      expect(result, isA<Ok>());
 
       // Request destination another time
       result = await repository.getByDestination('alaska');
-      expect(result, isA<Ok>());
 
       // Only one request happened
       expect(apiClient.requestCount, 1);

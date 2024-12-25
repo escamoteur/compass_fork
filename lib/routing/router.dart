@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
 import 'package:watch_it/watch_it.dart';
 
+import '../_features/activities/_managers/activity_manager_.dart';
 import '../_features/activities/widgets/activities_screen.dart';
 import '../_features/auth/_managers/auth_manager_.dart';
 import '../_features/auth/login/widgets/login_screen.dart';
@@ -36,6 +37,7 @@ GoRouter router() => GoRouter(
         GoRoute(
           path: Routes.home,
           builder: (context, state) {
+            di<BookingManager>().loadBookingsCommand.execute();
             return HomeScreen();
           },
           routes: [
@@ -54,6 +56,7 @@ GoRouter router() => GoRouter(
             GoRoute(
               path: Routes.activitiesRelative,
               builder: (context, state) {
+                di<ActivityManager>().loadActivitiesCommand.execute();
                 return ActivitiesScreen();
               },
             ),

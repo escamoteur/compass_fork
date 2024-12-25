@@ -10,7 +10,7 @@ import '../_managers/activity_manager_.dart';
 import '../_model/activity.dart';
 import 'activity_entry.dart';
 
-class ActivitiesList extends StatelessWidget {
+class ActivitiesList extends WatchingWidget {
   const ActivitiesList({
     super.key,
     required this.activities,
@@ -20,6 +20,7 @@ class ActivitiesList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final selectedActivities = watchIt<ActivityManager>().selectedActivities;
     return SliverPadding(
       padding: EdgeInsets.only(
         top: Dimens.paddingVertical,
@@ -37,9 +38,7 @@ class ActivitiesList extends StatelessWidget {
               child: ActivityEntry(
                 key: ValueKey(activity.ref),
                 activity: activity,
-                selected: di<ActivityManager>()
-                    .selectedActivities
-                    .contains(activity.ref),
+                selected: selectedActivities.contains(activity.ref),
                 onChanged: (value) {
                   if (value!) {
                     di<ActivityManager>().addActivity(activity.ref);

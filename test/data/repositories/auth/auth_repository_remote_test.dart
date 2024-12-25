@@ -2,9 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:compass_app/_features/auth/_managers/auth_manager_.dart';
 import 'package:compass_app/_features/auth/_managers/auth_manager_remote.dart';
-import 'package:compass_app/_shared/utils/result.dart';
+import 'package:compass_app/_shared/services/api/api_client.dart';
+import 'package:compass_app/_shared/services/shared_preferences_service.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:watch_it/watch_it.dart';
 
 import '../../../../testing/fakes/services/fake_api_client.dart';
 import '../../../../testing/fakes/services/fake_auth_api_client.dart';
@@ -13,39 +16,32 @@ import '../../../../testing/fakes/services/fake_shared_preferences_service.dart'
 void main() {
   group('AuthRepositoryRemote tests', () {
     late FakeApiClient apiClient;
-    late FakeAuthApiClient authApiClient;
     late FakeSharedPreferencesService sharedPreferencesService;
     late AuthManagerRemote repository;
 
     setUp(() {
+      di.reset();
+
       apiClient = FakeApiClient();
-      authApiClient = FakeAuthApiClient();
+      di.registerSingleton<ApiClient>(apiClient);
       sharedPreferencesService = FakeSharedPreferencesService();
-      repository = AuthManagerRemote(
-        apiClient: apiClient,
-        authApiClient: authApiClient,
-        sharedPreferencesService: sharedPreferencesService,
-      );
+      di.registerSingleton<SharedPreferencesService>(sharedPreferencesService);
     });
 
     test('fetch on start, has token', () async {
       // Stored token in shared preferences
       sharedPreferencesService.token = 'TOKEN';
 
-      // Create an AuthRepository, should perform initial fetch
-      final repository = AuthManagerRemote(
-        apiClient: apiClient,
-        authApiClient: authApiClient,
-        sharedPreferencesService: sharedPreferencesService,
-      );
+      // Create an AuthManagerRemote
+      final manager = await AuthManagerRemote().init();
 
-      final isAuthenticated = await repository.isAuthenticated;
+      final isAuthenticated = manager.isAuthenticated;
 
       // True because Token is SharedPreferences
       expect(isAuthenticated, isTrue);
 
       // Check auth token
-      await expectAuthHeader(apiClient, 'Bearer TOKEN');
+      await expectAuthHeader(di<ApiClient>() as FakeApiClient, 'Bearer TOKEN');
     });
 
     test('fetch on start, no token', () async {
@@ -53,28 +49,24 @@ void main() {
       sharedPreferencesService.token = null;
 
       // Create an AuthRepository, should perform initial fetch
-      final repository = AuthManagerRemote(
-        apiClient: apiClient,
-        authApiClient: authApiClient,
-        sharedPreferencesService: sharedPreferencesService,
-      );
+      final manager = await AuthManagerRemote().init();
 
-      final isAuthenticated = await repository.isAuthenticated;
+      final isAuthenticated = manager.isAuthenticated;
 
       // True because Token is SharedPreferences
       expect(isAuthenticated, isFalse);
 
       // Check auth token
-      await expectAuthHeader(apiClient, null);
+      await expectAuthHeader(di<ApiClient>() as FakeApiClient, null);
     });
 
     test('perform login', () async {
-      final result = await repository.login(
+      final manager = await AuthManagerRemote().init();
+      await manager.loginCommand.executeWithFuture((
         email: 'EMAIL',
         password: 'PASSWORD',
-      );
-      expect(result, isA<Ok>());
-      expect(await repository.isAuthenticated, isTrue);
+      ));
+      expect(manager.isAuthenticated, isTrue);
       expect(sharedPreferencesService.token, 'TOKEN');
 
       // Check auth token
@@ -85,9 +77,9 @@ void main() {
       // logged in status
       sharedPreferencesService.token = 'TOKEN';
 
-      final result = await repository.logout();
-      expect(result, isA<Ok>());
-      expect(await repository.isAuthenticated, isFalse);
+      final manager = await AuthManagerRemote().init();
+      await manager.logoutCommand.executeWithFuture();
+      expect(manager.isAuthenticated, isFalse);
       expect(sharedPreferencesService.token, null);
 
       // Check auth token

@@ -12,7 +12,9 @@ const userApiModel = UserApiModel(
   picture: 'assets/user.jpg',
 );
 
-const user = UserProxy(
+final user = UserProxy(UserApiModel(
+  id: 'ID',
   name: 'NAME',
+  email: 'EMAIL',
   picture: 'assets/user.jpg',
-);
+));

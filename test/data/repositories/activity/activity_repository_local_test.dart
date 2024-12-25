@@ -4,7 +4,6 @@
 
 import 'package:compass_app/_features/activities/_managers/activity_manager_local.dart';
 import 'package:compass_app/_shared/services/local/local_data_service.dart';
-import 'package:compass_app/_shared/utils/result.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -18,12 +17,10 @@ void main() {
 
     test('should get by destination ref', () async {
       final result = await repository.getByDestination('alaska');
-      expect(result, isA<Ok>());
 
-      final list = result.asOk.value;
-      expect(list.length, 20);
+      expect(result.length, 20);
 
-      final activity = list.first;
+      final activity = result.first;
       expect(activity.name, 'Glacier Trekking and Ice Climbing');
     });
   });

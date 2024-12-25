@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'package:compass_app/_shared/itinerary_config/itinerary_config.dart';
-import 'package:compass_app/_features/activities/view_models/activities_viewmodel.dart';
 import 'package:compass_app/_features/activities/widgets/activities_screen.dart';
 import 'package:compass_app/_features/activities/widgets/activity_entry.dart';
 import 'package:flutter/material.dart';

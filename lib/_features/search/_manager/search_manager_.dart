@@ -8,7 +8,6 @@ import 'package:logging/logging.dart';
 import 'package:watch_it/watch_it.dart';
 
 import '../../../_shared/itinerary_config/__manager/itinerary_config_manager_.dart';
-import '../../../_shared/itinerary_config/itinerary_config.dart';
 import '../_model/continent.dart';
 
 /// Data source with all possible continents.
@@ -69,33 +68,44 @@ abstract class SearchManager extends ChangeNotifier {
     notifyListeners();
   }
 
-  late final loadDataCommand =
-      Command.createAsyncNoParam<List<Continent>>(() async {
-    _continents = await getContinents();
-    final itineraryConfig =
-        await di<ItineraryConfigManager>().getItineraryConfig();
-    _selectedContinent = itineraryConfig.continent;
-    if (itineraryConfig.startDate != null && itineraryConfig.endDate != null) {
-      _dateRange = DateTimeRange(
-        start: itineraryConfig.startDate!,
-        end: itineraryConfig.endDate!,
+  void reset() {
+    _selectedContinent = null;
+    _dateRange = null;
+    _guests = 0;
+    notifyListeners();
+  }
+
+  late final loadDataCommand = Command.createAsyncNoParamNoResult(
+    () async {
+      _continents = await getContinents();
+      final itineraryConfig =
+          await di<ItineraryConfigManager>().getItineraryConfig();
+      _selectedContinent = itineraryConfig.continent;
+      if (itineraryConfig.startDate != null &&
+          itineraryConfig.endDate != null) {
+        _dateRange = DateTimeRange(
+          start: itineraryConfig.startDate!,
+          end: itineraryConfig.endDate!,
+        );
+      }
+      _guests = itineraryConfig.guests ?? 0;
+      _log.fine('ItineraryConfig loaded');
+    },
+  );
+
+  late final updateItineraryConfigCommand = Command.createAsyncNoParamNoResult(
+    () async {
+      final resultConfig =
+          await di<ItineraryConfigManager>().getItineraryConfig();
+
+      await di<ItineraryConfigManager>().setItineraryConfig(
+        resultConfig.copyWith(
+          continent: _selectedContinent,
+          startDate: _dateRange!.start,
+          endDate: _dateRange!.end,
+          guests: _guests,
+        ),
       );
-    }
-    _guests = itineraryConfig.guests ?? 0;
-    _log.fine('ItineraryConfig loaded');
-    return _continents;
-  }, initialValue: _continents);
-
-  late final updateItineraryConfigCommand =
-      Command.createAsyncNoParamNoResult(() async {
-    final resultConfig =
-        await di<ItineraryConfigManager>().getItineraryConfig();
-
-    await di<ItineraryConfigManager>().setItineraryConfig(resultConfig.copyWith(
-      continent: _selectedContinent,
-      startDate: _dateRange!.start,
-      endDate: _dateRange!.end,
-      guests: _guests,
-    ));
-  });
+    },
+  );
 }

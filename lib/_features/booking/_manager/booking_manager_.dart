@@ -12,6 +12,7 @@ import '../../../_shared/itinerary_config/__manager/itinerary_config_manager_.da
 import '../../../_shared/itinerary_config/itinerary_config.dart';
 import '../../../_shared/services/share_service.dart';
 import '../../../_shared/ui/ui/date_format_start_end.dart';
+import '../../../config/comand_names.dart';
 import '../../activities/_managers/activity_manager_.dart';
 import '../../search/_model/destination.dart';
 import '../_model/booking.dart';
@@ -33,14 +34,14 @@ abstract class BookingManager {
     _log.fine('Loaded stored ItineraryConfig');
     _booking.value = await createFrom(itineraryConfig);
     _log.fine('Created Booking');
-  });
+  }, debugName: cmdCreateBooking);
 
   /// Loads booking by id
   late final Command<int, void> loadBookingCommand =
       Command.createAsyncNoResult((id) async {
     _booking.value = await getBooking(id);
     _log.fine('Loaded booking $id');
-  });
+  }, debugName: cmdLoadBooking);
 
   late final Command<int, void> deleteBookingCommand =
       Command.createAsyncNoResult((id) async {
@@ -51,7 +52,7 @@ abstract class BookingManager {
     // BookingRepository is the source of truth for bookings.
     loadBookingsCommand.execute();
     _log.fine('Reloaded bookings after deletion');
-  });
+  }, debugName: cmdDeleteBooking);
 
   List<BookingSummary> get bookings => loadBookingsCommand.value;
 
@@ -63,6 +64,7 @@ abstract class BookingManager {
       return bookings;
     },
     initialValue: [],
+    debugName: cmdLoadBookings,
   );
 
   /// Share the current booking using the OS share dialog.
@@ -83,6 +85,7 @@ abstract class BookingManager {
         rethrow;
       }
     },
+    debugName: cmdShareBooking,
   );
 
   /// the current booking
