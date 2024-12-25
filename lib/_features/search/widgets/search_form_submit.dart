@@ -3,13 +3,15 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
+import 'package:flutter_command/flutter_command.dart';
 import 'package:go_router/go_router.dart';
+import 'package:watch_it/watch_it.dart';
 
-import '../../../routing/routes.dart';
 import '../../../_shared/ui/localization/applocalization.dart';
 import '../../../_shared/ui/themes/dimens.dart';
-import '../../results/widgets/results_screen.dart';
-import '../view_models/search_form_viewmodel.dart';
+import '../../../routing/routes.dart';
+import '../../results/results_screen.dart';
+import '../_manager/search_manager_.dart';
 
 const String searchFormSubmitButtonKey = 'submit-button';
 
@@ -18,40 +20,20 @@ const String searchFormSubmitButtonKey = 'submit-button';
 /// The button is disabled when the form is data is incomplete.
 /// When tapped, it navigates to the [ResultsScreen]
 /// passing the search options as query parameters.
-class SearchFormSubmit extends StatefulWidget {
+class SearchFormSubmit extends WatchingWidget {
   const SearchFormSubmit({
     super.key,
-    required this.viewModel,
   });
-
-  final SearchFormViewModel viewModel;
-
-  @override
-  State<SearchFormSubmit> createState() => _SearchFormSubmitState();
-}
-
-class _SearchFormSubmitState extends State<SearchFormSubmit> {
-  @override
-  void initState() {
-    super.initState();
-    widget.viewModel.updateItineraryConfig.addListener(_onResult);
-  }
-
-  @override
-  void didUpdateWidget(covariant SearchFormSubmit oldWidget) {
-    oldWidget.viewModel.updateItineraryConfig.removeListener(_onResult);
-    widget.viewModel.updateItineraryConfig.addListener(_onResult);
-    super.didUpdateWidget(oldWidget);
-  }
-
-  @override
-  void dispose() {
-    widget.viewModel.updateItineraryConfig.removeListener(_onResult);
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
+    registerHandler(
+      select: (SearchManager manager) =>
+          manager.updateItineraryConfigCommand.results,
+      handler: _onResult,
+    );
+    final isValid =
+        watchPropertyValue((SearchManager manager) => manager.valid);
     return Padding(
       padding: EdgeInsets.only(
         top: Dimens.paddingVertical,
@@ -59,40 +41,31 @@ class _SearchFormSubmitState extends State<SearchFormSubmit> {
         right: Dimens.of(context).paddingScreenHorizontal,
         bottom: Dimens.of(context).paddingScreenVertical,
       ),
-      child: ListenableBuilder(
-        listenable: widget.viewModel,
+      child: FilledButton(
+        key: const ValueKey(searchFormSubmitButtonKey),
+        onPressed: isValid
+            ? di<SearchManager>().updateItineraryConfigCommand.execute
+            : null,
         child: SizedBox(
           height: 52,
           child: Center(
             child: Text(AppLocalization.of(context).search),
           ),
         ),
-        builder: (context, child) {
-          return FilledButton(
-            key: const ValueKey(searchFormSubmitButtonKey),
-            onPressed: widget.viewModel.valid
-                ? widget.viewModel.updateItineraryConfig.execute
-                : null,
-            child: child,
-          );
-        },
       ),
     );
   }
 
-  void _onResult() {
-    if (widget.viewModel.updateItineraryConfig.completed) {
-      widget.viewModel.updateItineraryConfig.clearResult();
+  void _onResult(BuildContext context, CommandResult result, cancel) {
+    if (!result.isExecuting && !result.hasError) {
       context.go(Routes.results);
     }
-
-    if (widget.viewModel.updateItineraryConfig.error) {
-      widget.viewModel.updateItineraryConfig.clearResult();
+    if (result.hasError) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(AppLocalization.of(context).errorWhileSavingItinerary),
         action: SnackBarAction(
           label: AppLocalization.of(context).tryAgain,
-          onPressed: widget.viewModel.updateItineraryConfig.execute,
+          onPressed: di<SearchManager>().updateItineraryConfigCommand.execute,
         ),
       ));
     }

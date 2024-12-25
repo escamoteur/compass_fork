@@ -20,10 +20,11 @@ import 'model/user/user_api_model.dart';
 typedef AuthHeaderProvider = String? Function();
 
 class ApiException implements Exception {
-  ApiException(this.message, this.statusCode);
+  ApiException(this.message, {this.statusCode, this.innerException});
 
   final String message;
-  final int statusCode;
+  final int? statusCode;
+  final Object? innerException;
 
   @override
   String toString() => 'ApiException: $message, statusCode: $statusCode';
@@ -87,10 +88,11 @@ class ApiClient {
         final json = jsonDecode(stringData) as List<dynamic>;
         return json.map((element) => Continent.fromJson(element)).toList();
       } else {
-        throw HttpException("Invalid response");
+        throw ApiException("Error fetching continents",
+            statusCode: response.statusCode);
       }
-    } on Exception catch (error) {
-      throw error;
+    } catch (error) {
+      throw ApiException("Error fetching continents", innerException: error);
     }
   }
 
@@ -102,10 +104,11 @@ class ApiClient {
         final json = jsonDecode(stringData) as List<dynamic>;
         return json.map((element) => Destination.fromJson(element)).toList();
       } else {
-        throw HttpException("Invalid response");
+        throw ApiException("Error fetching destinations",
+            statusCode: response.statusCode);
       }
-    } on Exception catch (error) {
-      throw error;
+    } catch (error) {
+      throw ApiException("Error fetching destinations", innerException: error);
     }
   }
 
@@ -117,10 +120,11 @@ class ApiClient {
         final json = jsonDecode(stringData) as List<dynamic>;
         return json.map((element) => Activity.fromJson(element)).toList();
       } else {
-        throw HttpException("Invalid response");
+        throw ApiException("Error fetching activities",
+            statusCode: response.statusCode);
       }
-    } on Exception catch (error) {
-      throw error;
+    } catch (error) {
+      throw ApiException("Error fetching activities", innerException: error);
     }
   }
 
@@ -134,10 +138,11 @@ class ApiClient {
             .map((element) => BookingApiModel.fromJson(element))
             .toList();
       } else {
-        throw HttpException("Invalid response");
+        throw ApiException("Error fetching bookings",
+            statusCode: response.statusCode);
       }
-    } on Exception catch (error) {
-      throw error;
+    } catch (error) {
+      throw ApiException("Error fetching bookings", innerException: error);
     }
   }
 
@@ -148,10 +153,11 @@ class ApiClient {
         final stringData = utf8.decode(response.bodyBytes);
         return BookingApiModel.fromJson(jsonDecode(stringData));
       } else {
-        throw HttpException("Invalid response");
+        throw ApiException("Error fetching bookings",
+            statusCode: response.statusCode);
       }
-    } on Exception catch (error) {
-      throw error;
+    } catch (error) {
+      throw ApiException("Error fetching bookings", innerException: error);
     }
   }
 
@@ -162,21 +168,27 @@ class ApiClient {
         final stringData = utf8.decode(response.bodyBytes);
         return BookingApiModel.fromJson(jsonDecode(stringData));
       } else {
-        throw HttpException("Invalid response");
+        throw ApiException("Error creating booking",
+            statusCode: response.statusCode);
       }
-    } on Exception catch (error) {
-      throw error;
+    } catch (error) {
+      throw ApiException("Error creating booking", innerException: error);
     }
   }
 
   Future<UserApiModel> getUser() async {
-    final response = await get('/user');
-    if (response.statusCode == 200) {
-      final stringData = utf8.decode(response.bodyBytes);
-      final user = UserApiModel.fromJson(jsonDecode(stringData));
-      return user;
-    } else {
-      throw ApiException("Failed to load User", response.statusCode);
+    try {
+      final response = await get('/user');
+      if (response.statusCode == 200) {
+        final stringData = utf8.decode(response.bodyBytes);
+        final user = UserApiModel.fromJson(jsonDecode(stringData));
+        return user;
+      } else {
+        throw ApiException("Failed to load User",
+            statusCode: response.statusCode);
+      }
+    } catch (error) {
+      throw ApiException("Failed to load User", innerException: error);
     }
   }
 
@@ -187,21 +199,26 @@ class ApiClient {
       if (response.statusCode == 204) {
         return;
       } else {
-        throw HttpException("Invalid response");
+        throw ApiException("Error deleting booking",
+            statusCode: response.statusCode);
       }
-    } on Exception catch (error) {
-      throw error;
+    } catch (error) {
+      throw ApiException("Error deleting booking", innerException: error);
     }
   }
 
   Future<LoginResponse> login(LoginRequest loginRequest) async {
     assert(authToken == null, 'Already logged in');
-    final response = await post('/login', jsonEncode(loginRequest));
-    if (response.statusCode == 200) {
-      final stringData = utf8.decode(response.bodyBytes);
-      return LoginResponse.fromJson(jsonDecode(stringData));
-    } else {
-      throw ApiException('Failed to login', response.statusCode);
+    try {
+      final response = await post('/login', jsonEncode(loginRequest));
+      if (response.statusCode == 200) {
+        final stringData = utf8.decode(response.bodyBytes);
+        return LoginResponse.fromJson(jsonDecode(stringData));
+      } else {
+        throw ApiException('Failed to login', statusCode: response.statusCode);
+      }
+    } catch (error) {
+      throw ApiException('Failed to login', innerException: error);
     }
   }
 }

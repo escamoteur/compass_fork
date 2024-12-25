@@ -4,7 +4,7 @@
 
 import 'package:compass_app/_features/booking/_model/booking.dart';
 import 'package:compass_app/_features/booking/_model/booking_summary.dart';
-import 'package:compass_app/_features/booking/_repo/booking_manager_.dart';
+import 'package:compass_app/_features/booking/_manager/booking_manager_.dart';
 
 class FakeBookingRepository implements BookingManager {
   List<Booking> bookings = List.empty(growable: true);

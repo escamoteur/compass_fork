@@ -2,9 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:compass_app/_features/booking/_repo/booking_manager_.dart';
-import 'package:compass_app/_features/booking/_repo/booking_manager_remote.dart';
-import 'package:compass_app/_shared/utils/result.dart';
+import 'package:compass_app/_features/booking/_manager/booking_manager_.dart';
+import 'package:compass_app/_features/booking/_manager/booking_manager_remote.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../../../testing/fakes/services/fake_api_client.dart';

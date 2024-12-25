@@ -4,41 +4,32 @@ import 'package:compass_app/_features/activities/widgets/activities_screen.dart'
 import 'package:compass_app/_features/booking/widgets/booking_screen.dart';
 import 'package:compass_app/_shared/ui/ui/custom_checkbox.dart';
 import 'package:compass_app/_shared/ui/ui/home_button.dart';
-import 'package:compass_app/_features/home/widgets/home_screen.dart';
-import 'package:compass_app/_features/results/widgets/result_card.dart';
-import 'package:compass_app/_features/results/widgets/results_screen.dart';
+import 'package:compass_app/_features/home/home_screen.dart';
+import 'package:compass_app/_features/results/result_card.dart';
+import 'package:compass_app/_features/results/results_screen.dart';
 import 'package:compass_app/_features/search/widgets/search_form_guests.dart';
 import 'package:compass_app/_features/search/widgets/search_form_screen.dart';
 import 'package:compass_app/_features/search/widgets/search_form_submit.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:provider/provider.dart';
 
 /// This Integration Test launches the Compass-App with the local configuration.
 /// The app uses data from the assets folder to create a booking.
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+  registerDependencies();
+  registerLocalDependencies();
 
   group('end-to-end test with local data', () {
     testWidgets('should load app', (tester) async {
       // Load app widget.
-      await tester.pumpWidget(
-        MultiProvider(
-          providers: providersLocal,
-          child: const MainApp(),
-        ),
-      );
+      await tester.pumpWidget(const MainApp());
     });
 
     testWidgets('Open a booking', (tester) async {
       // Load app widget with local configuration
-      await tester.pumpWidget(
-        MultiProvider(
-          providers: providersLocal,
-          child: const MainApp(),
-        ),
-      );
+      await tester.pumpWidget(const MainApp());
 
       await tester.pumpAndSettle();
 
@@ -60,12 +51,7 @@ void main() {
 
     testWidgets('Create booking', (tester) async {
       // Load app widget with local configuration
-      await tester.pumpWidget(
-        MultiProvider(
-          providers: providersLocal,
-          child: const MainApp(),
-        ),
-      );
+      await tester.pumpWidget(const MainApp());
       await tester.pumpAndSettle();
 
       // Home screen

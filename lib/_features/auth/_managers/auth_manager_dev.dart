@@ -33,5 +33,5 @@ class AuthManagerDev extends AuthManager {
   late final Command<void, UserProxy?> getCurrentUserCommand =
       Command.createAsyncNoParam<UserProxy?>(() async {
     return _localDataService.getUser();
-  }, initialValue: null);
+  }, initialValue: _localDataService.getUser());
 }

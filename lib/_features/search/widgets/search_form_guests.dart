@@ -3,10 +3,11 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
+import 'package:watch_it/watch_it.dart';
 
 import '../../../_shared/ui/themes/colors.dart';
 import '../../../_shared/ui/themes/dimens.dart';
-import '../view_models/search_form_viewmodel.dart';
+import '../_manager/search_manager_.dart';
 
 const String removeGuestsKey = 'remove-guests';
 const String addGuestsKey = 'add-guests';
@@ -18,10 +19,7 @@ const String addGuestsKey = 'add-guests';
 class SearchFormGuests extends StatelessWidget {
   const SearchFormGuests({
     super.key,
-    required this.viewModel,
   });
-
-  final SearchFormViewModel viewModel;
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +46,7 @@ class SearchFormGuests extends StatelessWidget {
                 'Who',
                 style: Theme.of(context).textTheme.titleMedium,
               ),
-              _QuantitySelector(viewModel),
+              _QuantitySelector(),
             ],
           ),
         ),
@@ -58,9 +56,7 @@ class SearchFormGuests extends StatelessWidget {
 }
 
 class _QuantitySelector extends StatelessWidget {
-  const _QuantitySelector(this.viewModel);
-
-  final SearchFormViewModel viewModel;
+  const _QuantitySelector();
 
   @override
   Widget build(BuildContext context) {
@@ -72,7 +68,7 @@ class _QuantitySelector extends StatelessWidget {
           InkWell(
             key: const ValueKey(removeGuestsKey),
             onTap: () {
-              viewModel.guests--;
+              di<SearchManager>().guests--;
             },
             child: const Icon(
               Icons.remove_circle_outline,
@@ -80,10 +76,10 @@ class _QuantitySelector extends StatelessWidget {
             ),
           ),
           ListenableBuilder(
-            listenable: viewModel,
+            listenable: di<SearchManager>(),
             builder: (context, _) => Text(
-              viewModel.guests.toString(),
-              style: viewModel.guests == 0
+              di<SearchManager>().guests.toString(),
+              style: di<SearchManager>().guests == 0
                   ? Theme.of(context).inputDecorationTheme.hintStyle
                   : Theme.of(context).textTheme.bodyMedium,
             ),
@@ -91,7 +87,7 @@ class _QuantitySelector extends StatelessWidget {
           InkWell(
             key: const ValueKey(addGuestsKey),
             onTap: () {
-              viewModel.guests++;
+              di<SearchManager>().guests++;
             },
             child: const Icon(
               Icons.add_circle_outline,

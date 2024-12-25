@@ -8,14 +8,13 @@ import 'package:compass_app/_features/auth/logout/widgets/logout_button.dart';
 import 'package:compass_app/_features/booking/widgets/booking_screen.dart';
 import 'package:compass_app/_shared/ui/ui/custom_checkbox.dart';
 import 'package:compass_app/_shared/ui/ui/home_button.dart';
-import 'package:compass_app/_features/home/widgets/home_screen.dart';
-import 'package:compass_app/_features/results/widgets/result_card.dart';
-import 'package:compass_app/_features/results/widgets/results_screen.dart';
+import 'package:compass_app/_features/home/home_screen.dart';
+import 'package:compass_app/_features/results/result_card.dart';
+import 'package:compass_app/_features/results/results_screen.dart';
 import 'package:compass_app/_features/search/widgets/search_form_screen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// This Integration Test starts the Dart server
@@ -23,7 +22,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// The app connects to its endpoints to perform login and create a booking.
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
-
+  registerDependencies();
+  registerRemoteDependencies();
   group('end-to-end test with remote data', () {
     const port = '8080';
     late Process p;
@@ -49,12 +49,7 @@ void main() {
 
     testWidgets('should load app', (tester) async {
       // Load app widget.
-      await tester.pumpWidget(
-        MultiProvider(
-          providers: providersRemote,
-          child: const MainApp(),
-        ),
-      );
+      await tester.pumpWidget(const MainApp());
 
       await tester.pumpAndSettle();
 
@@ -64,12 +59,7 @@ void main() {
 
     testWidgets('Open a booking', (tester) async {
       // Load app widget with local configuration
-      await tester.pumpWidget(
-        MultiProvider(
-          providers: providersRemote,
-          child: const MainApp(),
-        ),
-      );
+      await tester.pumpWidget(const MainApp());
 
       await tester.pumpAndSettle();
 
@@ -110,12 +100,7 @@ void main() {
 
     testWidgets('Create booking', (tester) async {
       // Load app widget with local configuration
-      await tester.pumpWidget(
-        MultiProvider(
-          providers: providersRemote,
-          child: const MainApp(),
-        ),
-      );
+      await tester.pumpWidget(const MainApp());
 
       await tester.pumpAndSettle();
 

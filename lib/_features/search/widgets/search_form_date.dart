@@ -3,12 +3,13 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
+import 'package:watch_it/watch_it.dart';
 
 import '../../../_shared/ui/localization/applocalization.dart';
 import '../../../_shared/ui/themes/dimens.dart';
 import '../../../_shared/ui/ui/date_format_start_end.dart';
 import '../../../_shared/ui/themes/colors.dart';
-import '../view_models/search_form_viewmodel.dart';
+import '../_manager/search_manager_.dart';
 
 /// Date selection form field.
 ///
@@ -16,10 +17,7 @@ import '../view_models/search_form_viewmodel.dart';
 class SearchFormDate extends StatelessWidget {
   const SearchFormDate({
     super.key,
-    required this.viewModel,
   });
-
-  final SearchFormViewModel viewModel;
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +34,7 @@ class SearchFormDate extends StatelessWidget {
             context: context,
             firstDate: DateTime.now(),
             lastDate: DateTime.now().add(const Duration(days: 365)),
-          ).then((dateRange) => viewModel.dateRange = dateRange);
+          ).then((dateRange) => di<SearchManager>().dateRange = dateRange);
         },
         child: Container(
           height: 64,
@@ -56,9 +54,9 @@ class SearchFormDate extends StatelessWidget {
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
                 ListenableBuilder(
-                  listenable: viewModel,
+                  listenable: di<SearchManager>(),
                   builder: (context, _) {
-                    final dateRange = viewModel.dateRange;
+                    final dateRange = di<SearchManager>().dateRange;
                     if (dateRange != null) {
                       return Text(
                         dateFormatStartEnd(dateRange),

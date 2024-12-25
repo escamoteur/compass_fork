@@ -4,7 +4,7 @@
 
 import 'package:compass_app/_shared/itinerary_config/itinerary_config.dart';
 import 'package:compass_app/_features/results/view_models/results_viewmodel.dart';
-import 'package:compass_app/_features/results/widgets/results_screen.dart';
+import 'package:compass_app/_features/results/results_screen.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:mocktail_image_network/mocktail_image_network.dart';

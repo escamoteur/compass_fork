@@ -13,7 +13,7 @@ import '../../../_shared/ui/ui/error_indicator.dart';
 import '../../../_shared/utils/image_error_listener.dart';
 import '../../../routing/routes.dart';
 import '../../activities/_model/activity.dart';
-import '../_repo/booking_manager_.dart';
+import '../_manager/booking_manager_.dart';
 import 'booking_header.dart';
 
 class BookingBody extends WatchingWidget {

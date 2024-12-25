@@ -12,12 +12,10 @@ import '../_model/booking_summary.dart';
 import 'booking_manager_.dart';
 
 class BookingManagerRemote extends BookingManager {
-  BookingManagerRemote(
-      {
-      //you and inject the apiClient for testing her otherwise it will use the default one
-      ApiClient? apiClient,
-      required super.share})
-      : _apiClient = apiClient ?? di<ApiClient>();
+  BookingManagerRemote({
+    //you and inject the apiClient for testing her otherwise it will use the default one
+    ApiClient? apiClient,
+  }) : _apiClient = apiClient ?? di<ApiClient>();
 
   final ApiClient _apiClient;
 

@@ -4,15 +4,16 @@
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:watch_it/watch_it.dart';
 
-import '../../../routing/routes.dart';
 import '../../../_shared/ui/themes/dimens.dart';
 import '../../../_shared/ui/ui/search_bar.dart';
-import '../../results/widgets/results_screen.dart';
-import '../view_models/search_form_viewmodel.dart';
+import '../../../routing/routes.dart';
+import '../../results/results_screen.dart';
+import '../_manager/search_manager_.dart';
+import 'search_form_continent.dart';
 import 'search_form_date.dart';
 import 'search_form_guests.dart';
-import 'search_form_continent.dart';
 import 'search_form_submit.dart';
 
 /// Search form screen
@@ -20,16 +21,14 @@ import 'search_form_submit.dart';
 /// Displays a search form with continent, date and guests selection.
 /// Tapping on the submit button opens the [ResultsScreen] screen
 /// passing the search options as query parameters.
-class SearchFormScreen extends StatelessWidget {
+class SearchFormScreen extends WatchingWidget {
   const SearchFormScreen({
     super.key,
-    required this.viewModel,
   });
-
-  final SearchFormViewModel viewModel;
 
   @override
   Widget build(BuildContext context) {
+    callOnce((_) => di<SearchManager>().loadDataCommand.execute());
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, r) {
@@ -52,11 +51,11 @@ class SearchFormScreen extends StatelessWidget {
                 child: const AppSearchBar(),
               ),
             ),
-            SearchFormContinent(viewModel: viewModel),
-            SearchFormDate(viewModel: viewModel),
-            SearchFormGuests(viewModel: viewModel),
+            const SearchFormContinent(),
+            const SearchFormDate(),
+            const SearchFormGuests(),
             const Spacer(),
-            SearchFormSubmit(viewModel: viewModel),
+            const SearchFormSubmit(),
           ],
         ),
       ),

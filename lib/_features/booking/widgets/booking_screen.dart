@@ -8,7 +8,7 @@ import 'package:watch_it/watch_it.dart';
 
 import '../../../_shared/ui/localization/applocalization.dart';
 import '../../../routing/routes.dart';
-import '../_repo/booking_manager_.dart';
+import '../_manager/booking_manager_.dart';
 import 'booking_body.dart';
 
 class BookingScreen extends WatchingWidget {

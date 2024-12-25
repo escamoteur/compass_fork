@@ -2,12 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:compass_app/_features/search/_repo/continent_repository.dart';
+import 'package:compass_app/_features/search/_manager/search_manager_.dart';
 import 'package:compass_app/_features/search/_model/continent.dart';
 import 'package:compass_app/_shared/utils/result.dart';
 import 'package:flutter/foundation.dart';
 
-class FakeContinentRepository implements ContinentRepository {
+class FakeContinentRepository implements SearchManager {
   @override
   Future<List<Continent>>> getContinents() {
     return SynchronousFuture(Result.ok([

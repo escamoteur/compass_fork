@@ -1,4 +1,7 @@
-/// TODO
+import 'package:share_plus/share_plus.dart';
+
+typedef ShareFunction = Future<void> Function(String text);
+
 class ShareService {
   ShareService._(this._share);
 
@@ -9,5 +12,8 @@ class ShareService {
   factory ShareService.custom(ShareFunction share) => ShareService._(share);
 
   final ShareFunction _share;
-  final _log = Logger('BookingShareUseCase');
+
+  Future<void> share(String text) async {
+    await _share(text);
+  }
 }

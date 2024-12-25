@@ -5,31 +5,31 @@
 import 'package:watch_it/watch_it.dart';
 
 import '../../../_shared/services/api/api_client.dart';
-import '../_model/activity.dart';
-import 'activity_manager_.dart';
+import '../_model/continent.dart';
+import 'search_manager_.dart';
 
-/// Remote data source for [Activity].
+/// Remote data source for [Continent].
 /// Implements basic local caching.
 /// See: https://docs.flutter.dev/get-started/fwe/local-caching
-class ActivitManagerRemote extends ActivityManager {
-  ActivitManagerRemote({
+class SearchManagerRemote extends SearchManager {
+  SearchManagerRemote({
     ApiClient? apiClient,
   }) : _apiClient = apiClient ?? di.get<ApiClient>();
 
   final ApiClient _apiClient;
 
-  final Map<String, List<Activity>> _cachedData = {};
+  List<Continent>? _cachedData;
 
   @override
-  Future<List<Activity>> getByDestination(String ref) async {
-    if (!_cachedData.containsKey(ref)) {
-      // No cached data, request activities
-      final result = await _apiClient.getActivityByDestination(ref);
-      _cachedData[ref] = result;
+  Future<List<Continent>> getContinents() async {
+    if (_cachedData == null) {
+      // No cached data, request continents
+      final result = await _apiClient.getContinents();
+      _cachedData = result;
       return result;
     } else {
       // Return cached data if available
-      return _cachedData[ref]!;
+      return _cachedData!;
     }
   }
 }

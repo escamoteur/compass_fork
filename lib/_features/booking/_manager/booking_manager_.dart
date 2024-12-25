@@ -10,25 +10,19 @@ import 'package:watch_it/watch_it.dart';
 
 import '../../../_shared/itinerary_config/__manager/itinerary_config_manager_.dart';
 import '../../../_shared/itinerary_config/itinerary_config.dart';
+import '../../../_shared/services/share_service.dart';
 import '../../../_shared/ui/ui/date_format_start_end.dart';
 import '../../activities/_managers/activity_manager_.dart';
 import '../../search/_model/destination.dart';
 import '../_model/booking.dart';
 import '../_model/booking_summary.dart';
 
-typedef ShareFunction = Future<void> Function(String text);
-
 abstract class BookingManager {
-  BookingManager({
-    required ShareFunction share,
-  }) : _share = share;
-
   late final ValueListenable<bool> isBusy =
       createBookingCommand.isExecuting.mergeWith(
     [loadBookingCommand.isExecuting, deleteBookingCommand.isExecuting],
   );
 
-  final ShareFunction _share;
   final _log = Logger('BookingViewModel');
 
   late final Command<void, void> createBookingCommand =
@@ -82,7 +76,7 @@ abstract class BookingManager {
 
       _log.info('Sharing booking: $text');
       try {
-        await _share(text);
+        await di<ShareService>().share(text);
         _log.fine('Shared booking');
       } on Exception catch (error) {
         _log.severe('Failed to share booking', error);

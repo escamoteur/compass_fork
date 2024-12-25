@@ -4,15 +4,17 @@
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_command/flutter_command.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:watch_it/watch_it.dart';
 
-import '../_model/continent.dart';
-import '../../../_shared/utils/image_error_listener.dart';
 import '../../../_shared/ui/localization/applocalization.dart';
 import '../../../_shared/ui/themes/colors.dart';
 import '../../../_shared/ui/themes/dimens.dart';
 import '../../../_shared/ui/ui/error_indicator.dart';
-import '../view_models/search_form_viewmodel.dart';
+import '../../../_shared/utils/image_error_listener.dart';
+import '../_manager/search_manager_.dart';
+import '../_model/continent.dart';
 
 /// Continent selection carousel
 ///
@@ -22,56 +24,45 @@ import '../view_models/search_form_viewmodel.dart';
 class SearchFormContinent extends StatelessWidget {
   const SearchFormContinent({
     super.key,
-    required this.viewModel,
   });
-
-  final SearchFormViewModel viewModel;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       height: 140,
-      child: ListenableBuilder(
-        listenable: viewModel.load,
-        builder: (context, child) {
-          if (viewModel.load.running) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-          if (viewModel.load.error) {
-            return Center(
-              child: ErrorIndicator(
-                title: AppLocalization.of(context).errorWhileLoadingContinents,
-                label: AppLocalization.of(context).tryAgain,
-                onPressed: viewModel.load.execute,
-              ),
-            );
-          }
-          return child!;
-        },
-        child: ListenableBuilder(
-          listenable: viewModel,
-          builder: (context, child) {
-            return ListView.separated(
-              scrollDirection: Axis.horizontal,
-              itemCount: viewModel.continents.length,
-              padding: Dimens.of(context).edgeInsetsScreenHorizontal,
-              itemBuilder: (BuildContext context, int index) {
-                final Continent(:imageUrl, :name) = viewModel.continents[index];
-                return _CarouselItem(
-                  key: ValueKey(name),
-                  imageUrl: imageUrl,
-                  name: name,
-                  viewModel: viewModel,
-                );
-              },
-              separatorBuilder: (BuildContext context, int index) {
-                return const SizedBox(width: 8);
-              },
-            );
-          },
+      child: CommandBuilder(
+        command: di<SearchManager>().loadDataCommand,
+        whileExecuting: (context, lastValue, param) => const Center(
+          child: CircularProgressIndicator(),
         ),
+        onError: (context, error, lastValue, param) => Center(
+          child: ErrorIndicator(
+            title: AppLocalization.of(context).errorWhileLoadingContinents,
+            label: AppLocalization.of(context).tryAgain,
+            onPressed: di<SearchManager>().loadDataCommand.execute,
+          ),
+        ),
+        onData: (context, data, param) => ListenableBuilder(
+            listenable: di<SearchManager>(),
+            builder: (context, snapshot) {
+              return ListView.separated(
+                scrollDirection: Axis.horizontal,
+                itemCount: di<SearchManager>().continents.length,
+                padding: Dimens.of(context).edgeInsetsScreenHorizontal,
+                itemBuilder: (BuildContext context, int index) {
+                  final Continent(:imageUrl, :name) =
+                      di<SearchManager>().continents[index];
+                  return _CarouselItem(
+                    key: ValueKey(name),
+                    imageUrl: imageUrl,
+                    name: name,
+                  );
+                },
+                separatorBuilder: (BuildContext context, int index) {
+                  return const SizedBox(width: 8);
+                },
+              );
+            }),
       ),
     );
   }
@@ -82,19 +73,16 @@ class _CarouselItem extends StatelessWidget {
     super.key,
     required this.imageUrl,
     required this.name,
-    required this.viewModel,
   });
 
   final String imageUrl;
   final String name;
-  final SearchFormViewModel viewModel;
-
-  bool _selected() =>
-      viewModel.selectedContinent == null ||
-      viewModel.selectedContinent == name;
 
   @override
   Widget build(BuildContext context) {
+    final searchManager = di<SearchManager>();
+    final _selected = searchManager.selectedContinent == null ||
+        searchManager.selectedContinent == name;
     return SizedBox(
       width: 140,
       height: 140,
@@ -135,7 +123,7 @@ class _CarouselItem extends StatelessWidget {
             // Overlay when other continent is selected
             Positioned.fill(
               child: AnimatedOpacity(
-                opacity: _selected() ? 0 : 0.7,
+                opacity: _selected ? 0 : 0.7,
                 duration: kThemeChangeDuration,
                 child: DecoratedBox(
                   decoration: BoxDecoration(
@@ -151,10 +139,10 @@ class _CarouselItem extends StatelessWidget {
                 color: Colors.transparent,
                 child: InkWell(
                   onTap: () {
-                    if (viewModel.selectedContinent == name) {
-                      viewModel.selectedContinent = null;
+                    if (searchManager.selectedContinent == name) {
+                      searchManager.selectedContinent = null;
                     } else {
-                      viewModel.selectedContinent = name;
+                      searchManager.selectedContinent = name;
                     }
                   },
                 ),

@@ -8,7 +8,7 @@ import '../itinerary_config.dart';
 import 'itinerary_config_manager_.dart';
 
 /// In-memory implementation of [ItineraryConfigManager].
-class ItineraryConfigManagerMemory implements ItineraryConfigManager {
+class ItineraryConfigManagerMemory extends ItineraryConfigManager {
   ItineraryConfig? _itineraryConfig;
 
   @override

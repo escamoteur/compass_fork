@@ -4,7 +4,7 @@
 
 import 'package:compass_app/_features/auth/_managers/auth_manager_.dart';
 import 'package:compass_app/_features/home/view_models/home_viewmodel.dart';
-import 'package:compass_app/_features/home/widgets/home_screen.dart';
+import 'package:compass_app/_features/home/home_screen.dart';
 import 'package:compass_app/_shared/itinerary_config/__manager/itinerary_config_manager_.dart';
 import 'package:compass_app/_shared/utils/result.dart';
 import 'package:compass_app/routing/routes.dart';

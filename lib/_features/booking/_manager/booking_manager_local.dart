@@ -15,7 +15,6 @@ import 'booking_manager_.dart';
 class BookingManagerLocal extends BookingManager {
   BookingManagerLocal({
     required LocalDataService localDataService,
-    required super.share,
   }) : _localDataService = localDataService;
 
   // Only create default booking once
