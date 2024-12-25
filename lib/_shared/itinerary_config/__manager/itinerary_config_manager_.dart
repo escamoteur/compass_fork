@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter_command/flutter_command.dart';
-
 import '../itinerary_config.dart';
 
 /// Data source for the current [ItineraryConfig]

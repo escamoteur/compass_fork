@@ -10,6 +10,8 @@ import '../../../_shared/itinerary_config/__manager/itinerary_config_manager_.da
 import '../../../_shared/itinerary_config/itinerary_config.dart';
 import '../_model/user.dart';
 
+/// Normally it would be enough to observe the commands, but we this as
+/// a Listenable so goRouter can listen to it
 abstract class AuthManager extends ChangeNotifier {
   /// Returns true when the user is logged in
   bool get isAuthenticated;

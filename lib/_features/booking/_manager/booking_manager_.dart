@@ -54,8 +54,6 @@ abstract class BookingManager {
     _log.fine('Reloaded bookings after deletion');
   }, debugName: cmdDeleteBooking);
 
-  List<BookingSummary> get bookings => loadBookingsCommand.value;
-
   late final Command<void, List<BookingSummary>> loadBookingsCommand =
       Command.createAsyncNoParam(
     () async {

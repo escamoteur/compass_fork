@@ -2,42 +2,39 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:compass_app/_shared/itinerary_config/itinerary_config.dart';
-import 'package:compass_app/_features/auth/logout/view_models/logout_viewmodel.dart';
+import 'package:compass_app/_features/auth/_managers/auth_manager_.dart';
 import 'package:compass_app/_features/auth/logout/widgets/logout_button.dart';
+import 'package:compass_app/_shared/itinerary_config/itinerary_config.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail_image_network/mocktail_image_network.dart';
+import 'package:watch_it/watch_it.dart';
 
 import '../../../testing/app.dart';
-import '../../../testing/fakes/repositories/fake_auth_repository.dart';
-import '../../../testing/fakes/repositories/fake_itinerary_config_repository.dart';
+import '../../../testing/fakes/managers/fake_auth_manager.dart';
+import '../../../testing/fakes/managers/fake_itinerary_config_manager.dart';
 import '../../../testing/mocks.dart';
 
 void main() {
   group('LogoutButton test', () {
     late MockGoRouter goRouter;
-    late FakeAuthRepository fakeAuthRepository;
-    late FakeItineraryConfigRepository fakeItineraryConfigRepository;
-    late LogoutViewModel viewModel;
+    late FakeAuthManager fakeAuthRepository;
+    late FakeItineraryConfigManager fakeItineraryConfigRepository;
 
     setUp(() {
       goRouter = MockGoRouter();
-      fakeAuthRepository = FakeAuthRepository();
+      fakeAuthRepository = FakeAuthManager();
       // Setup a token, should be cleared after logout
       fakeAuthRepository.token = 'TOKEN';
       // Setup an ItineraryConfig with some data, should be cleared after logout
-      fakeItineraryConfigRepository = FakeItineraryConfigRepository(
+      fakeItineraryConfigRepository = FakeItineraryConfigManager(
           itineraryConfig: const ItineraryConfig(continent: 'CONTINENT'));
-      viewModel = LogoutViewModel(
-        authRepository: fakeAuthRepository,
-        itineraryConfigRepository: fakeItineraryConfigRepository,
-      );
+      di.registerSingleton<AuthManager>(fakeAuthRepository);
     });
 
     Future<void> loadScreen(WidgetTester tester) async {
       await testApp(
         tester,
-        LogoutButton(viewModel: viewModel),
+        LogoutButton(),
         goRouter: goRouter,
       );
     }

@@ -16,12 +16,9 @@ import '../../models/activity.dart';
 import '../../models/booking.dart';
 import '../../models/user.dart';
 
-class FakeApiClient implements ApiClient {
+class FakeApiClient extends ApiClient {
   // Should not increase when using cached data
   int requestCount = 0;
-
-  @override
-  String? authToken;
 
   @override
   Future<List<Continent>> getContinents() async {
@@ -86,9 +83,6 @@ class FakeApiClient implements ApiClient {
 
     return [];
   }
-
-  @override
-  AuthHeaderProvider? authHeaderProvider;
 
   @override
   Future<BookingApiModel> getBooking(int id) async {

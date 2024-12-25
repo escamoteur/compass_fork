@@ -2,34 +2,32 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:compass_app/_features/search/view_models/search_form_viewmodel.dart';
+import 'package:compass_app/_features/search/_manager/search_manager_.dart';
 import 'package:compass_app/_features/search/widgets/search_form_submit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:watch_it/watch_it.dart';
 
 import '../../../../testing/app.dart';
-import '../../../../testing/fakes/repositories/fake_continent_repository.dart';
-import '../../../../testing/fakes/repositories/fake_itinerary_config_repository.dart';
+import '../../../../testing/fakes/managers/fake_search_manager.dart';
 import '../../../../testing/mocks.dart';
 
 void main() {
   group('SearchFormSubmit widget tests', () {
-    late SearchFormViewModel viewModel;
+    late FakeSearchManager searchManager;
     late MockGoRouter goRouter;
 
     setUp(() {
-      viewModel = SearchFormViewModel(
-        continentRepository: FakeContinentRepository(),
-        itineraryConfigRepository: FakeItineraryConfigRepository(),
-      );
+      searchManager = FakeSearchManager();
+      di.registerSingleton<SearchManager>(searchManager);
       goRouter = MockGoRouter();
     });
 
     loadWidget(WidgetTester tester) async {
       await testApp(
         tester,
-        SearchFormSubmit(viewModel: viewModel),
+        SearchFormSubmit(),
         goRouter: goRouter,
       );
     }
@@ -43,13 +41,13 @@ void main() {
       verifyNever(() => goRouter.go(any()));
 
       // Fill in data
-      viewModel.guests = 2;
-      viewModel.selectedContinent = 'CONTINENT';
+      searchManager.guests = 2;
+      searchManager.selectedContinent = 'CONTINENT';
       final DateTimeRange newDateRange = DateTimeRange(
         start: DateTime(2024, 1, 1),
         end: DateTime(2024, 1, 31),
       );
-      viewModel.dateRange = newDateRange;
+      searchManager.dateRange = newDateRange;
       await tester.pumpAndSettle();
 
       // Perform search

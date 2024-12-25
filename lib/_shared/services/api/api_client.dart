@@ -51,30 +51,32 @@ class ApiClient {
   /// An app should use a single client for all requests.
   static Client? _client;
 
-  Future<void> _applyAuth() async {
+  void _applyAuth() {
     if (authToken != null) {
       _headerParams
           .addAll({HttpHeaders.authorizationHeader: 'Bearer $authToken'});
     }
   }
 
+  String? get authHeader => _headerParams[HttpHeaders.authorizationHeader];
+
   Future<Response> post(String path, dynamic body) async {
     final uri = Uri.http('$_host:$_port', path);
-    await _applyAuth();
+    _applyAuth();
     final request = await _client!.post(uri,
         headers: _headerParams, body: body != null ? jsonEncode(body) : null);
     return request;
   }
 
   Future<Response> get(String path) async {
-    await _applyAuth();
+    _applyAuth();
     final uri = Uri.http('$_host:$_port', path);
     final request = await _client!.get(uri, headers: _headerParams);
     return request;
   }
 
   Future<Response> delete(String path) async {
-    await _applyAuth();
+    _applyAuth();
     final uri = Uri.http('$_host:$_port', path);
     final request = await _client!.get(uri, headers: _headerParams);
     return request;

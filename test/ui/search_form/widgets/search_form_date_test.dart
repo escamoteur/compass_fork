@@ -2,28 +2,26 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:compass_app/_features/search/view_models/search_form_viewmodel.dart';
+import 'package:compass_app/_features/search/_manager/search_manager_.dart';
 import 'package:compass_app/_features/search/widgets/search_form_date.dart';
-import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:watch_it/watch_it.dart';
 
 import '../../../../testing/app.dart';
-import '../../../../testing/fakes/repositories/fake_continent_repository.dart';
-import '../../../../testing/fakes/repositories/fake_itinerary_config_repository.dart';
+import '../../../../testing/fakes/managers/fake_search_manager.dart';
 
 void main() {
   group('SearchFormDate widget tests', () {
-    late SearchFormViewModel viewModel;
+    late FakeSearchManager searchManager;
 
     setUp(() {
-      viewModel = SearchFormViewModel(
-        continentRepository: FakeContinentRepository(),
-        itineraryConfigRepository: FakeItineraryConfigRepository(),
-      );
+      searchManager = FakeSearchManager();
+      di.registerSingleton<SearchManager>(searchManager);
     });
 
     loadWidget(WidgetTester tester) async {
-      await testApp(tester, SearchFormDate(viewModel: viewModel));
+      await testApp(tester, SearchFormDate());
     }
 
     testWidgets('should display date in different month',
@@ -35,7 +33,7 @@ void main() {
       expect(find.text('Add Dates'), findsOneWidget);
 
       // Simulate date picker input:
-      viewModel.dateRange = DateTimeRange(
+      searchManager.dateRange = DateTimeRange(
           start: DateTime(2024, 6, 12), end: DateTime(2024, 7, 23));
       await tester.pumpAndSettle();
 
@@ -51,7 +49,7 @@ void main() {
       expect(find.text('Add Dates'), findsOneWidget);
 
       // Simulate date picker input:
-      viewModel.dateRange = DateTimeRange(
+      searchManager.dateRange = DateTimeRange(
           start: DateTime(2024, 6, 12), end: DateTime(2024, 6, 23));
       await tester.pumpAndSettle();
 

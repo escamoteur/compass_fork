@@ -2,42 +2,44 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:compass_app/_shared/itinerary_config/itinerary_config.dart';
-import 'package:compass_app/_features/results/view_models/results_viewmodel.dart';
+import 'package:compass_app/_features/booking/_manager/booking_manager_.dart';
 import 'package:compass_app/_features/results/results_screen.dart';
+import 'package:compass_app/_shared/itinerary_config/__manager/itinerary_config_manager_.dart';
+import 'package:compass_app/_shared/itinerary_config/itinerary_config.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:mocktail_image_network/mocktail_image_network.dart';
+import 'package:watch_it/watch_it.dart';
 
 import '../../../testing/app.dart';
-import '../../../testing/fakes/repositories/fake_destination_repository.dart';
-import '../../../testing/fakes/repositories/fake_itinerary_config_repository.dart';
+import '../../../testing/fakes/managers/fake_booking_manager.dart';
+import '../../../testing/fakes/managers/fake_itinerary_config_manager.dart';
 import '../../../testing/mocks.dart';
+import '../../../testing/models/booking.dart';
 
 void main() {
   group('ResultsScreen widget tests', () {
     late MockGoRouter goRouter;
-    late ResultsViewModel viewModel;
 
     setUp(() {
-      viewModel = ResultsViewModel(
-        destinationRepository: FakeDestinationRepository(),
-        itineraryConfigRepository: FakeItineraryConfigRepository(
-          itineraryConfig: ItineraryConfig(
-            continent: 'Europe',
-            startDate: DateTime(2024, 01, 01),
-            endDate: DateTime(2024, 01, 31),
-            guests: 2,
-          ),
+      final bookingManager = FakeBookingManager()..createBooking(kBooking);
+      final itineraryConfigRepository = FakeItineraryConfigManager(
+        itineraryConfig: ItineraryConfig(
+          continent: 'Europe',
+          startDate: DateTime(2024, 01, 01),
+          endDate: DateTime(2024, 01, 31),
+          guests: 2,
         ),
       );
+      di.registerSingleton<ItineraryConfigManager>(itineraryConfigRepository);
+      di.registerSingleton<BookingManager>(bookingManager);
       goRouter = MockGoRouter();
     });
 
     Future<void> loadScreen(WidgetTester tester) async {
       await testApp(
         tester,
-        ResultsScreen(viewModel: viewModel),
+        ResultsScreen(),
         goRouter: goRouter,
       );
     }

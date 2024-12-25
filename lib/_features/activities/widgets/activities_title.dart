@@ -4,9 +4,7 @@
 
 import 'package:flutter/material.dart';
 
-import '../../../_shared/ui/localization/applocalization.dart';
 import '../../../_shared/ui/themes/dimens.dart';
-import 'activity_time_of_day.dart';
 
 class ActivitiesTitle extends StatelessWidget {
   const ActivitiesTitle({

@@ -32,6 +32,7 @@ void main() {
 
     test('should get destinations from cache', () async {
       // Request destination once
+      // ignore: unused_local_variable
       var result = await repository.getByDestination('alaska');
 
       // Request destination another time

@@ -2,46 +2,33 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:compass_app/_features/auth/_managers/auth_manager_.dart';
-import 'package:compass_app/_features/search/view_models/search_form_viewmodel.dart';
+import 'package:compass_app/_features/search/_manager/search_manager_.dart';
 import 'package:compass_app/_features/search/widgets/search_form_guests.dart';
 import 'package:compass_app/_features/search/widgets/search_form_screen.dart';
 import 'package:compass_app/_features/search/widgets/search_form_submit.dart';
-import 'package:compass_app/_shared/itinerary_config/__manager/itinerary_config_manager_.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:provider/provider.dart';
-
+import 'package:watch_it/watch_it.dart';
 import '../../../../testing/app.dart';
-import '../../../../testing/fakes/repositories/fake_auth_repository.dart';
-import '../../../../testing/fakes/repositories/fake_continent_repository.dart';
-import '../../../../testing/fakes/repositories/fake_itinerary_config_repository.dart';
+import '../../../../testing/fakes/managers/fake_search_manager.dart';
 import '../../../../testing/mocks.dart';
 
 void main() {
   group('SearchFormScreen widget tests', () {
-    late SearchFormViewModel viewModel;
+    late FakeSearchManager searchManager;
     late MockGoRouter goRouter;
 
     setUp(() {
-      viewModel = SearchFormViewModel(
-        continentRepository: FakeContinentRepository(),
-        itineraryConfigRepository: FakeItineraryConfigRepository(),
-      );
+      searchManager = FakeSearchManager();
+      di.registerSingleton<SearchManager>(searchManager);
       goRouter = MockGoRouter();
     });
 
     loadWidget(WidgetTester tester) async {
       await testApp(
         tester,
-        ChangeNotifierProvider.value(
-          value: FakeAuthRepository() as AuthManager,
-          child: Provider.value(
-            value: FakeItineraryConfigRepository() as ItineraryConfigManager,
-            child: SearchFormScreen(viewModel: viewModel),
-          ),
-        ),
+        SearchFormScreen(),
         goRouter: goRouter,
       );
     }
@@ -55,7 +42,7 @@ void main() {
       await tester.tap(find.text('CONTINENT'), warnIfMissed: false);
 
       // Select date
-      viewModel.dateRange = DateTimeRange(
+      searchManager.dateRange = DateTimeRange(
           start: DateTime(2024, 6, 12), end: DateTime(2024, 7, 23));
 
       // Select guests

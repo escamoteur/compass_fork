@@ -4,27 +4,22 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:compass_app/_features/search/view_models/search_form_viewmodel.dart';
 
-import '../../../../testing/fakes/repositories/fake_continent_repository.dart';
-import '../../../../testing/fakes/repositories/fake_itinerary_config_repository.dart';
+import '../../../../testing/fakes/managers/fake_search_manager.dart';
 
 void main() {
   group('SearchFormViewModel Tests', () {
-    late SearchFormViewModel viewModel;
+    late FakeSearchManager searchManager;
 
     setUp(() {
-      viewModel = SearchFormViewModel(
-        continentRepository: FakeContinentRepository(),
-        itineraryConfigRepository: FakeItineraryConfigRepository(),
-      );
+      searchManager = FakeSearchManager();
     });
 
     test('Initial values are correct', () {
-      expect(viewModel.valid, false);
-      expect(viewModel.selectedContinent, null);
-      expect(viewModel.dateRange, null);
-      expect(viewModel.guests, 0);
+      expect(searchManager.valid, false);
+      expect(searchManager.selectedContinent, null);
+      expect(searchManager.dateRange, null);
+      expect(searchManager.guests, 0);
     });
 
     test('Setting dateRange updates correctly', () {
@@ -32,42 +27,43 @@ void main() {
         start: DateTime(2024, 1, 1),
         end: DateTime(2024, 1, 31),
       );
-      viewModel.dateRange = newDateRange;
-      expect(viewModel.dateRange, newDateRange);
+      searchManager.dateRange = newDateRange;
+      expect(searchManager.dateRange, newDateRange);
     });
 
     test('Setting selectedContinent updates correctly', () {
-      viewModel.selectedContinent = 'CONTINENT';
-      expect(viewModel.selectedContinent, 'CONTINENT');
+      searchManager.selectedContinent = 'CONTINENT';
+      expect(searchManager.selectedContinent, 'CONTINENT');
 
       // Setting null should work
-      viewModel.selectedContinent = null;
-      expect(viewModel.selectedContinent, null);
+      searchManager.selectedContinent = null;
+      expect(searchManager.selectedContinent, null);
     });
 
     test('Setting guests updates correctly', () {
-      viewModel.guests = 2;
-      expect(viewModel.guests, 2);
+      searchManager.guests = 2;
+      expect(searchManager.guests, 2);
 
       // Guests number should not be negative
-      viewModel.guests = -1;
-      expect(viewModel.guests, 0);
+      searchManager.guests = -1;
+      expect(searchManager.guests, 0);
     });
 
     test('Set all values and save', () async {
-      expect(viewModel.valid, false);
+      expect(searchManager.valid, false);
 
-      viewModel.guests = 2;
-      viewModel.selectedContinent = 'CONTINENT';
+      searchManager.guests = 2;
+      searchManager.selectedContinent = 'CONTINENT';
       final DateTimeRange newDateRange = DateTimeRange(
         start: DateTime(2024, 1, 1),
         end: DateTime(2024, 1, 31),
       );
-      viewModel.dateRange = newDateRange;
+      searchManager.dateRange = newDateRange;
 
-      expect(viewModel.valid, true);
-      await viewModel.updateItineraryConfig.execute();
-      expect(viewModel.updateItineraryConfig.completed, true);
+      expect(searchManager.valid, true);
+      final future =
+          searchManager.updateItineraryConfigCommand.executeWithFuture();
+      expect(future, completes);
     });
   });
 }

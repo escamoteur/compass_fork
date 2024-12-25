@@ -39,9 +39,7 @@ class BookingManagerRemote extends BookingManager {
     final booking = await _apiClient.getBooking(id);
 
     // Load destinations if not loaded yet
-    if (_cachedDestinations == null) {
-      _cachedDestinations = await _apiClient.getDestinations();
-    }
+    _cachedDestinations ??= await _apiClient.getDestinations();
 
     // Get destination for booking
     final destination = _cachedDestinations!

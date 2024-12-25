@@ -2,37 +2,24 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:compass_app/_features/auth/_managers/auth_manager_.dart';
-import 'package:compass_app/_features/home/view_models/home_viewmodel.dart';
 import 'package:compass_app/_features/home/home_screen.dart';
-import 'package:compass_app/_shared/itinerary_config/__manager/itinerary_config_manager_.dart';
-import 'package:compass_app/_shared/utils/result.dart';
 import 'package:compass_app/routing/routes.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:provider/provider.dart';
 
 import '../../../../testing/app.dart';
-import '../../../../testing/fakes/repositories/fake_auth_repository.dart';
-import '../../../../testing/fakes/repositories/fake_booking_repository.dart';
-import '../../../../testing/fakes/repositories/fake_itinerary_config_repository.dart';
-import '../../../../testing/fakes/repositories/fake_user_repository.dart';
+import '../../../../testing/fakes/managers/fake_booking_manager.dart';
 import '../../../../testing/mocks.dart';
 import '../../../../testing/models/booking.dart';
 
 void main() {
   group('HomeScreen tests', () {
-    late HomeViewModel viewModel;
     late MockGoRouter goRouter;
-    late FakeBookingRepository bookingRepository;
+    late FakeBookingManager bookingManager;
 
     setUp(() {
-      bookingRepository = FakeBookingRepository()..createBooking(kBooking);
-      viewModel = HomeViewModel(
-        bookingRepository: bookingRepository,
-        userRepository: FakeUserRepository(),
-      );
+      bookingManager = FakeBookingManager()..createBooking(kBooking);
       goRouter = MockGoRouter();
       when(() => goRouter.push(any())).thenAnswer((_) => Future.value(null));
     });
@@ -40,13 +27,7 @@ void main() {
     loadWidget(WidgetTester tester) async {
       await testApp(
         tester,
-        ChangeNotifierProvider.value(
-          value: FakeAuthRepository() as AuthManager,
-          child: Provider.value(
-            value: FakeItineraryConfigRepository() as ItineraryConfigManager,
-            child: HomeScreen(viewModel: viewModel),
-          ),
-        ),
+        HomeScreen(),
         goRouter: goRouter,
       );
     }
@@ -101,15 +82,12 @@ void main() {
       expect(find.text('name1, Europe'), findsNothing);
 
       // Booking should be deleted from repository
-      expect(bookingRepository.bookings, isEmpty);
+      expect(bookingManager.bookings, isEmpty);
     });
 
     testWidgets('fail to delete booking', (tester) async {
       // Create a ViewModel with a repository that will fail to delete
-      viewModel = HomeViewModel(
-        bookingRepository: _BadFakeBookingRepository()..createBooking(kBooking),
-        userRepository: FakeUserRepository(),
-      );
+      bookingManager = FakeBookingManager()..createBooking(kBooking);
       await loadWidget(tester);
       await tester.pumpAndSettle();
 
@@ -121,11 +99,4 @@ void main() {
       expect(find.text('name1, Europe'), findsOneWidget);
     });
   });
-}
-
-class _BadFakeBookingRepository extends FakeBookingRepository {
-  @override
-  Future<void>> deleteBooking(int id) async {
-    return Result.error(Exception('Failed to delete booking'));
-  }
 }

@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:compass_app/_features/auth/_managers/auth_manager_.dart';
 import 'package:compass_app/_features/auth/_managers/auth_manager_remote.dart';
 import 'package:compass_app/_shared/services/api/api_client.dart';
 import 'package:compass_app/_shared/services/shared_preferences_service.dart';
@@ -10,14 +9,12 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:watch_it/watch_it.dart';
 
 import '../../../../testing/fakes/services/fake_api_client.dart';
-import '../../../../testing/fakes/services/fake_auth_api_client.dart';
 import '../../../../testing/fakes/services/fake_shared_preferences_service.dart';
 
 void main() {
   group('AuthRepositoryRemote tests', () {
     late FakeApiClient apiClient;
     late FakeSharedPreferencesService sharedPreferencesService;
-    late AuthManagerRemote repository;
 
     setUp(() {
       di.reset();
@@ -89,6 +86,6 @@ void main() {
 }
 
 Future<void> expectAuthHeader(FakeApiClient apiClient, String? header) async {
-  final header = apiClient.authHeaderProvider?.call();
+  final header = apiClient.authHeader;
   expect(header, header);
 }

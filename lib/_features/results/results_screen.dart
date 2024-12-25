@@ -111,7 +111,7 @@ class _ResultsScreenState extends State<ResultsScreen> {
                   child: _AppSearchBar(config: data!.config),
                 ),
                 _Grid(
-                  destinations: data!.destinations,
+                  destinations: data.destinations,
                   updateItineraryConfigCommand:
                       _updateItineraryConfigWithDestinationsCommand,
                 ),

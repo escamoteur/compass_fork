@@ -51,7 +51,6 @@ class AuthManagerRemote extends AuthManager {
           scopeName: 'logged_in',
         );
       } finally {
-        /// TODO Not sure yet if we will keet this here because the commands can directly be observed
         notifyListeners();
       }
     },

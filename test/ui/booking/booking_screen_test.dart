@@ -2,19 +2,20 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:compass_app/_features/booking/booking_create_use_case.dart';
-import 'package:compass_app/_features/booking/booking_share_use_case.dart';
+import 'package:compass_app/_features/booking/_manager/booking_manager_.dart';
+import 'package:compass_app/_shared/itinerary_config/__manager/itinerary_config_manager_.dart';
 import 'package:compass_app/_shared/itinerary_config/itinerary_config.dart';
-import 'package:compass_app/_features/booking/view_models/booking_viewmodel.dart';
 import 'package:compass_app/_features/booking/widgets/booking_screen.dart';
+import 'package:compass_app/_shared/services/share_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:watch_it/watch_it.dart';
 
 import '../../../testing/app.dart';
-import '../../../testing/fakes/repositories/fake_activities_repository.dart';
-import '../../../testing/fakes/repositories/fake_booking_repository.dart';
-import '../../../testing/fakes/repositories/fake_destination_repository.dart';
-import '../../../testing/fakes/repositories/fake_itinerary_config_repository.dart';
+// ignore: unused_import
+import '../../../testing/fakes/managers/fake_activities_manager.dart';
+import '../../../testing/fakes/managers/fake_booking_manager.dart';
+import '../../../testing/fakes/managers/fake_itinerary_config_manager.dart';
 import '../../../testing/mocks.dart';
 import '../../../testing/models/activity.dart';
 import '../../../testing/models/booking.dart';
@@ -23,15 +24,15 @@ import '../../../testing/models/destination.dart';
 void main() {
   group('BookingScreen widget tests', () {
     late MockGoRouter goRouter;
-    late BookingViewModel viewModel;
+    late FakeBookingManager bookingManager;
     late bool shared;
-    late FakeBookingRepository bookingRepository;
 
     setUp(() {
       shared = false;
-      bookingRepository = FakeBookingRepository();
-      viewModel = BookingViewModel(
-        itineraryConfigRepository: FakeItineraryConfigRepository(
+      bookingManager = FakeBookingManager();
+      di.registerSingleton<BookingManager>(bookingManager);
+      di.registerSingleton<ItineraryConfigManager>(
+        FakeItineraryConfigManager(
           itineraryConfig: ItineraryConfig(
             continent: 'Europe',
             startDate: DateTime(2024, 01, 01),
@@ -41,23 +42,17 @@ void main() {
             activities: [kActivity.ref],
           ),
         ),
-        createBookingUseCase: BookingCreateUseCase(
-          activityRepository: FakeActivityRepository(),
-          destinationRepository: FakeDestinationRepository(),
-          bookingRepository: bookingRepository,
-        ),
-        shareBookingUseCase: BookingShareUseCase.custom((text) async {
-          shared = true;
-        }),
-        bookingRepository: bookingRepository,
       );
+      di.registerSingleton<ShareService>(ShareService.custom((text) async {
+        shared = true;
+      }));
       goRouter = MockGoRouter();
     });
 
     Future<void> loadScreen(WidgetTester tester) async {
       await testApp(
         tester,
-        BookingScreen(viewModel: viewModel),
+        BookingScreen(),
         goRouter: goRouter,
       );
     }
@@ -69,13 +64,13 @@ void main() {
 
     testWidgets('should display booking from ID', (WidgetTester tester) async {
       // Add a booking to repository
-      bookingRepository.createBooking(kBooking);
+      bookingManager.createBooking(kBooking);
 
       // Load screen
       await loadScreen(tester);
 
       // Load booking with ID 0
-      viewModel.loadBooking.execute(0);
+      bookingManager.loadBookingCommand(0);
 
       // Wait for booking to load
       await tester.pumpAndSettle();
@@ -89,7 +84,7 @@ void main() {
       await loadScreen(tester);
 
       // Create a new booking from stored itinerary config
-      viewModel.createBooking.execute();
+      bookingManager.createBookingCommand();
 
       // Wait for booking to load
       await tester.pumpAndSettle();
@@ -98,13 +93,13 @@ void main() {
       expect(find.text('tags1'), findsOneWidget);
 
       // Booking is saved
-      expect(bookingRepository.bookings.length, 1);
+      expect(bookingManager.bookings.length, 1);
     });
 
     testWidgets('should share booking', (WidgetTester tester) async {
-      bookingRepository.createBooking(kBooking);
+      bookingManager.createBooking(kBooking);
       await loadScreen(tester);
-      viewModel.loadBooking.execute(0);
+      bookingManager.loadBookingCommand(0);
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('share-button')));
       expect(shared, true);
